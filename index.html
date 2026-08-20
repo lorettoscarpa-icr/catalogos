@@ -16,6 +16,10 @@
   --verde:#6dbf6d; --vermelho:#e07070; --amarelo:var(--ou);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
+/* .gate e .tabnav declaram display:flex, que ganha do display:none que o
+   navegador aplica ao atributo hidden. Sem esta linha, a tela de login
+   nunca some depois que a vendedora entra. */
+[hidden]{display:none !important;}
 body{font-family:'Barlow',sans-serif;background:
     radial-gradient(ellipse 120% 60% at 50% 100%, rgba(212,180,90,.06) 0%, transparent 60%),
     radial-gradient(ellipse 80% 40% at 50% 0%, rgba(74,99,48,.4) 0%, transparent 50%),
@@ -61,7 +65,8 @@ main{padding:24px;max-width:1400px;margin:0 auto;}
 /* ─── Grade de arquivos ─── */
 .grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;}
 .card{background:var(--bg2);border:1px solid var(--oud2);border-radius:3px;overflow:hidden;display:flex;flex-direction:column;transition:.15s;}
-.card:hover{border-color:var(--oud);}
+.card:hover{border-color:var(--oud);transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.28);}
+.bt:focus-visible,.ac:focus-visible,.chip:focus-visible,.lst-th:focus-visible{outline:2px solid var(--ou);outline-offset:2px;}
 .card-capa{position:relative;aspect-ratio:3/4;background:var(--bgd);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;}
 .card.foto .card-capa{aspect-ratio:1/1;}
 .card-capa img{width:100%;height:100%;object-fit:cover;display:block;}
@@ -79,6 +84,71 @@ main{padding:24px;max-width:1400px;margin:0 auto;}
 .ac.mini{flex:0 0 auto;padding:7px 9px;}
 .ac.del:hover{border-color:var(--vermelho);color:var(--vermelho);background:rgba(224,112,112,.08);}
 .card-adm{display:flex;gap:4px;padding:0 8px 9px;border-top:1px solid var(--oud2);margin:0 8px;padding-top:8px;}
+
+/* ─── Cabeçalho de contexto ─── */
+.pgtit{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px;}
+.pgtit-l{display:flex;align-items:baseline;gap:12px;min-width:0;}
+.pgtit h2{font-family:'Cormorant Garamond',serif;font-size:25px;font-weight:400;letter-spacing:1.5px;color:var(--cr);line-height:1.1;}
+.pgtit-c{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.4px;text-transform:uppercase;color:var(--cr3);white-space:nowrap;}
+.chip{background:rgba(212,180,90,.1);border:1px solid var(--oud);color:var(--ou2);padding:6px 12px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.2px;text-transform:uppercase;cursor:pointer;border-radius:99px;transition:.15s;}
+.chip:hover{background:rgba(212,180,90,.2);}
+
+/* ─── Barra de ferramentas ─── */
+.barra-div{width:1px;align-self:stretch;background:var(--oud2);margin:0 2px;}
+.barra-esp{flex:1 1 auto;}
+
+/* ─── Visão em lista ─── */
+.lst{border:1px solid var(--oud2);border-radius:3px;overflow:hidden;background:var(--bg2);}
+.lst-head,.lin{display:grid;grid-template-columns:38px minmax(0,1fr) 108px 86px auto;gap:12px;align-items:center;padding:9px 12px;}
+.lst-head{position:sticky;top:0;z-index:3;background:#22350f;border-bottom:1px solid var(--oud2);}
+.lst-th{display:flex;align-items:center;gap:5px;background:none;border:0;padding:0;color:var(--cr3);font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:1.3px;text-transform:uppercase;cursor:pointer;transition:.15s;}
+.lst-th:hover{color:var(--ou2);}
+.lst-th.on{color:var(--ou2);}
+.lst-th .chev{font-size:7px;opacity:.9;}
+.lst-grp{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 12px;background:rgba(0,0,0,.3);border-bottom:1px solid var(--oud2);font-size:9px;letter-spacing:2.6px;text-transform:uppercase;color:var(--ou2);}
+.lst-grp .qtd{font-family:'DM Mono',monospace;letter-spacing:1px;color:var(--cr3);}
+.lin{border-bottom:1px solid var(--oud2);transition:.12s;}
+.lin:last-child{border-bottom:0;}
+.lin:hover{background:rgba(212,180,90,.05);}
+.lin.sel{background:rgba(212,180,90,.12);box-shadow:inset 2px 0 0 var(--ou);}
+.lin-ico{width:38px;height:38px;border-radius:2px;background:var(--bgd);border:1px solid var(--oud2);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;}
+.lin-ico img{width:100%;height:100%;object-fit:cover;display:block;}
+.lin-ico .ico{font-size:16px;opacity:.5;}
+.lin-nome{min-width:0;cursor:pointer;}
+.lin-nome b{display:block;font-size:13.5px;font-weight:400;color:var(--cr);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lin-sub{display:none;font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.8px;text-transform:uppercase;color:var(--cr3);margin-top:2px;}
+.lin-mod,.lin-tam{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.8px;color:var(--cr3);white-space:nowrap;}
+.lin-tam .econ{color:var(--verde);}
+.lin-acoes{display:flex;gap:4px;justify-content:flex-end;opacity:0;transition:opacity .14s;}
+.lin:hover .lin-acoes,.lin:focus-within .lin-acoes{opacity:1;}
+/* Em celular e tablet não existe hover — os botões ficam sempre à mostra. */
+@media(hover:none){ .lin-acoes{opacity:1;} }
+.lin-acoes .ac{flex:0 0 auto;padding:7px 9px;font-size:10px;display:flex;align-items:center;gap:5px;}
+/* O rótulo só entra onde cabe. Em tela estreita fica o ícone, com o
+   nome da ação no title pra quem passar o mouse ou segurar o toque. */
+.lin-acoes .rot{display:none;font-size:8.5px;letter-spacing:.8px;text-transform:uppercase;}
+@media(min-width:1100px){ .lin-acoes .rot{display:inline;} }
+.lin-check{width:20px;height:20px;border-radius:3px;border:1px solid var(--ou);background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font-size:11px;line-height:1;color:var(--v0);margin:0 auto;}
+.lin.sel .lin-check{background:var(--ou);}
+@media(max-width:860px){
+  .lst-head{display:none;}
+  .lin{grid-template-columns:38px minmax(0,1fr) auto;}
+  .lin-mod,.lin-tam{display:none;}
+  .lin-sub{display:block;}
+  /* Nome de catálogo é comprido; em tela estreita deixa usar 2 linhas
+     em vez de cortar em "Catálogo Verão 2…". */
+  .lin-nome b{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+}
+@media(max-width:640px){ .barra-div,.barra-esp{display:none;} }
+
+/* ─── Seleção múltipla ─── */
+.card.sel{border-color:var(--ou);box-shadow:inset 0 0 0 1px var(--ou);}
+.card-check{position:absolute;top:8px;left:8px;width:24px;height:24px;border-radius:3px;border:1px solid var(--ou);background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;font-size:13px;line-height:1;color:var(--v0);z-index:2;}
+.card.sel .card-check{background:var(--ou);}
+.selbar{position:fixed;left:50%;bottom:24px;transform:translate(-50%,26px);z-index:150;display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;background:#1b2a12;border:1px solid var(--oud);border-radius:3px;padding:11px 15px;box-shadow:0 8px 26px rgba(0,0,0,.5);max-width:94vw;opacity:0;pointer-events:none;transition:.2s;}
+.selbar.show{opacity:1;pointer-events:auto;transform:translate(-50%,0);}
+.selbar .selcnt{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--ou2);white-space:nowrap;margin-right:4px;}
+body.selmodo #toast{bottom:100px;}
 
 .vazio{background:var(--bg2);border:1px dashed var(--oud2);padding:40px 26px;text-align:center;color:var(--cr3);font-size:13.5px;line-height:1.6;border-radius:3px;}
 .vazio b{color:var(--ou2);font-weight:500;}
@@ -180,11 +250,23 @@ main{padding:24px;max-width:1400px;margin:0 auto;}
   <div id="app" hidden>
     <div id="aviso-storage"></div>
 
+    <div class="pgtit">
+      <div class="pgtit-l">
+        <h2 id="pg-tit">Catálogos</h2>
+        <span class="pgtit-c" id="pg-cnt"></span>
+      </div>
+      <button class="chip" id="pg-limpar" onclick="limparFiltros()" hidden>✕ Limpar filtro</button>
+    </div>
+
     <div class="barra">
       <div class="busca"><span class="lupa">⌕</span><input type="text" id="busca" placeholder="Buscar por nome ou coleção…" oninput="render()"></div>
       <select class="sel" id="filtro-col" onchange="render()"><option value="">Todas as coleções</option></select>
+      <span class="barra-div"></span>
       <button class="bt" id="bt-zip" onclick="baixarFiltrados()">⤓ Baixar tudo (.zip)</button>
+      <button class="bt" id="bt-sel" onclick="alternarSelecao()" hidden>☑ Selecionar</button>
       <button class="bt ouro" id="bt-subir" onclick="abrirUpload()" hidden>+ Subir arquivos</button>
+      <span class="barra-esp"></span>
+      <button class="bt" id="bt-vista" onclick="alternarVista()">▤ Lista</button>
     </div>
 
     <div class="tab-content active" id="tab-pdf"><div id="lista-pdf"></div></div>
@@ -260,6 +342,15 @@ main{padding:24px;max-width:1400px;margin:0 auto;}
   </div>
 </div>
 
+<!-- Barra flutuante: aparece só no modo seleção -->
+<div class="selbar" id="selbar">
+  <span class="selcnt" id="sel-cnt">Nenhum selecionado</span>
+  <button class="bt" onclick="selTodos()">Selecionar todos</button>
+  <button class="bt" onclick="selNenhum()">Limpar</button>
+  <button class="bt perigo" id="bt-selex" onclick="excluirSelecionados()" disabled>✕ Excluir selecionados</button>
+  <button class="bt" onclick="sairSelecao()">Sair</button>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -302,6 +393,22 @@ const COL       = 'ls_catalogos';
 let DB=null, AUTH=null, ST=null;
 let SESSION=null, EDITOR=false, ITENS=[], TAB='pdf', _authOk=false;
 
+// Modo seleção: liga as caixinhas nos cards pra excluir vários de uma vez.
+// SEL guarda os ids marcados; é sempre limpo ao trocar de aba ou sair.
+let SELMODO=false, SEL=Object.create(null);
+
+// 'grade' (cards com capa) ou 'lista' (linhas, estilo gerenciador de
+// arquivos). Fica gravado no navegador de cada vendedora.
+let VISTA = 'grade';
+try{ VISTA = localStorage.getItem('ls_cat_vista') || 'grade'; }catch(e){}
+
+// Ordenação: 'data' | 'nome' | 'tam'. DIR 1 = crescente, -1 = decrescente.
+let ORD = 'data', ORDDIR = -1;
+try{
+  const g = (localStorage.getItem('ls_cat_ord')||'').split(':');
+  if(g[0]==='data'||g[0]==='nome'||g[0]==='tam'){ ORD = g[0]; ORDDIR = (g[1]==='1') ? 1 : -1; }
+}catch(e){}
+
 try{
   firebase.initializeApp(firebaseConfig);
   AUTH = firebase.auth();
@@ -336,6 +443,7 @@ if(AUTH){
     document.getElementById('app').hidden  = false;
     document.getElementById('tabnav').hidden = false;
     document.getElementById('bt-subir').hidden = !EDITOR;
+    document.getElementById('bt-sel').hidden    = !EDITOR;
 
     escutar();
   });
@@ -364,6 +472,9 @@ function escutar(){
 
 /* ══════════ Render ══════════ */
 function abrirTab(t, btn){
+  // A seleção é sempre de uma aba só — trocar de aba zera, senão dava
+  // pra excluir foto achando que estava marcando catálogo.
+  if(SELMODO) sairSelecao();
   TAB = t;
   document.querySelectorAll('.tabnav-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
@@ -375,12 +486,41 @@ function abrirTab(t, btn){
 function filtrados(tipo){
   const q   = (document.getElementById('busca').value||'').trim().toLowerCase();
   const col = document.getElementById('filtro-col').value;
-  return ITENS.filter(function(i){
+  return ordenar(ITENS.filter(function(i){
     if(i.tipo !== tipo) return false;
     if(col && (i.colecao||'') !== col) return false;
     if(q && (i.nome+' '+(i.colecao||'')).toLowerCase().indexOf(q) < 0) return false;
     return true;
+  }));
+}
+
+function quandoMs(i){
+  return (i.criadoEm && i.criadoEm.toDate) ? i.criadoEm.toDate().getTime() : 0;
+}
+
+function ordenar(lista){
+  return lista.slice().sort(function(a,b){
+    let r;
+    if(ORD === 'nome')     r = String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR');
+    else if(ORD === 'tam') r = (a.tam||0) - (b.tam||0);
+    else                   r = quandoMs(a) - quandoMs(b);
+    return r * ORDDIR;
   });
+}
+
+function ordPor(campo){
+  // Clicou na coluna que já ordena? Inverte. Senão, começa no sentido
+  // que a pessoa espera: nome A→Z, data e tamanho do maior pro menor.
+  if(ORD === campo) ORDDIR = -ORDDIR;
+  else { ORD = campo; ORDDIR = (campo === 'nome') ? 1 : -1; }
+  try{ localStorage.setItem('ls_cat_ord', ORD+':'+ORDDIR); }catch(e){}
+  render();
+}
+
+function limparFiltros(){
+  document.getElementById('busca').value = '';
+  document.getElementById('filtro-col').value = '';
+  render();
 }
 
 // Repinta SEMPRE as duas abas. Se pintasse só a ativa, a outra ficaria com
@@ -390,7 +530,11 @@ function render(){
   document.getElementById('cnt-pdf').textContent  = ITENS.filter(i=>i.tipo==='pdf').length  || '';
   document.getElementById('cnt-foto').textContent = ITENS.filter(i=>i.tipo==='foto').length || '';
   ['pdf','foto'].forEach(renderLista);
-  document.getElementById('bt-zip').disabled = !filtrados(TAB).length;
+  const naTela = filtrados(TAB);
+  document.getElementById('bt-zip').disabled = !naTela.length;
+  renderCabecalho(naTela.length);
+  renderVistaBt();
+  renderSelbar();
 }
 
 function renderLista(tipo){
@@ -420,9 +564,27 @@ function renderLista(tipo){
     grupos[idx[c]].itens.push(i);
   });
 
+  const rotulo = function(g){
+    return g.itens.length+' '+(tipo==='pdf'?'catálogo':'foto')+(g.itens.length>1?'s':'');
+  };
+
+  if(VISTA === 'lista'){
+    alvo.innerHTML = '<div class="lst">'
+      + '<div class="lst-head"><span></span>'
+        + th('nome','Nome') + th('data','Modificado') + th('tam','Tamanho')
+        + '<span></span></div>'
+      + grupos.map(function(g){
+          return '<div class="lst-grp"><span>'+esc(g.nome)+'</span>'
+               + '<span class="qtd">'+rotulo(g)+'</span></div>'
+               + g.itens.map(linha).join('');
+        }).join('')
+      + '</div>';
+    return;
+  }
+
   alvo.innerHTML = grupos.map(function(g){
     return '<div class="slbl"><span>'+esc(g.nome)+'</span>'
-         + '<span class="qtd">'+g.itens.length+' '+(tipo==='pdf'?'catálogo':'foto')+(g.itens.length>1?'s':'')+'</span></div>'
+         + '<span class="qtd">'+rotulo(g)+'</span></div>'
          + '<div class="grade">' + g.itens.map(card).join('') + '</div>';
   }).join('');
 }
@@ -437,20 +599,30 @@ function card(i){
   const econ = (i.tamOrig && i.tamOrig > i.tam*1.15)
     ? ' · <span class="econ">−'+Math.round((1-i.tam/i.tamOrig)*100)+'%</span>' : '';
 
-  return '<div class="card '+i.tipo+'" draggable="true" ondragstart="arrastar(event,\''+i.id+'\')">'
-    + '<div class="card-capa" onclick="ver(\''+i.id+'\')">'+capa+'<div class="lupa-ver">Ver</div></div>'
-    + '<div class="card-corpo">'
+  // No modo seleção o card inteiro vira alvo de clique e os botões saem de
+  // cena — assim ninguém marca cinco arquivos e apaga um sexto sem querer.
+  const marcado = SELMODO && !!SEL[i.id];
+
+  return '<div class="card '+i.tipo+(marcado?' sel':'')+'"'
+      + (SELMODO ? '' : ' draggable="true" ondragstart="arrastar(event,\''+i.id+'\')"') + '>'
+    + '<div class="card-capa" onclick="'+(SELMODO?'selToggle':'ver')+'(\''+i.id+'\')">'+capa
+      + (SELMODO
+          ? '<div class="card-check">'+(marcado?'✓':'')+'</div>'
+          : '<div class="lupa-ver">Ver</div>')
+    + '</div>'
+    + '<div class="card-corpo"'+(SELMODO?' style="cursor:pointer;" onclick="selToggle(\''+i.id+'\')"':'')+'>'
       + '<div class="card-nome">'+esc(i.nome)+'</div>'
       + '<div class="card-meta">'+tam(i.tam)+econ+(quando?' · '+quando:'')+'</div>'
     + '</div>'
-    + '<div class="card-acoes">'
+    + (SELMODO ? '' :
+        '<div class="card-acoes">'
       + '<button class="ac" onclick="baixar(\''+i.id+'\')" title="Baixar pro computador">⤓ Baixar</button>'
       + (i.tipo==='foto'
           ? '<button class="ac" onclick="copiarImagem(\''+i.id+'\',this)" title="Copiar e colar com Ctrl+V no WhatsApp Web">⧉ Copiar</button>'
           : '<button class="ac" onclick="copiarLink(\''+i.id+'\')" title="Copiar o link pra mandar pro cliente">⛓ Link</button>')
       + '<button class="ac mini" onclick="enviarNativo(\''+i.id+'\')" title="Compartilhar (celular)">↗</button>'
-    + '</div>'
-    + (EDITOR
+    + '</div>')
+    + (EDITOR && !SELMODO
         ? '<div class="card-adm">'
           + '<button class="ac" onclick="abrirRenomear(\''+i.id+'\')">✎ Editar</button>'
           + '<button class="ac del" onclick="excluir(\''+i.id+'\')">✕ Excluir</button>'
@@ -1279,11 +1451,182 @@ async function excluir(id){
   }
 }
 
+/* ══════════ Cabeçalho de contexto ══════════ */
+// Diz em voz alta o que está na tela agora — inclusive quando um filtro
+// está escondendo arquivos, que é quando alguém acha que "sumiu".
+function renderCabecalho(n){
+  const pdf  = (TAB === 'pdf');
+  const col  = document.getElementById('filtro-col').value;
+  const q    = (document.getElementById('busca').value||'').trim();
+  const fltr = !!(col || q);
+
+  document.getElementById('pg-tit').textContent =
+    col ? col : (pdf ? 'Catálogos' : 'Fotos das Coleções');
+
+  const plural  = (n === 1) ? '' : 's';
+  const palavra = (pdf ? 'catálogo' : 'foto') + plural;
+  const achado  = fltr ? ' ' + (pdf ? 'encontrado' : 'encontrada') + plural : '';
+  document.getElementById('pg-cnt').textContent = n + ' ' + palavra + achado;
+
+  document.getElementById('pg-limpar').hidden = !fltr;
+}
+
+/* ══════════ Grade × Lista ══════════ */
+function alternarVista(){
+  VISTA = (VISTA === 'lista') ? 'grade' : 'lista';
+  try{ localStorage.setItem('ls_cat_vista', VISTA); }catch(e){}
+  render();
+}
+
+// Célula clicável do cabeçalho da lista.
+function th(campo, rotulo){
+  const ativa = (ORD === campo);
+  return '<button class="lst-th'+(ativa?' on':'')+'" onclick="ordPor(\''+campo+'\')"'
+    + ' title="Ordenar por '+rotulo.toLowerCase()+'">'+rotulo
+    + '<span class="chev">'+(ativa ? (ORDDIR>0?'▲':'▼') : '')+'</span></button>';
+}
+
+function renderVistaBt(){
+  // O botão mostra pra onde você VAI, não onde está.
+  document.getElementById('bt-vista').textContent =
+    (VISTA === 'lista') ? '▦ Grade' : '▤ Lista';
+}
+
+// Uma linha da lista. Mesmas ações do card, só que compactas: em tela
+// larga sai ícone + rótulo, em tela estreita só o ícone. O espaço que
+// sobra vai pro nome do arquivo, que é o que a pessoa procura.
+function linha(i){
+  const marcado = SELMODO && !!SEL[i.id];
+  const quando  = i.criadoEm && i.criadoEm.toDate
+    ? i.criadoEm.toDate().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'})
+    : '—';
+  const econ = (i.tamOrig && i.tamOrig > i.tam*1.15)
+    ? ' <span class="econ">−'+Math.round((1-i.tam/i.tamOrig)*100)+'%</span>' : '';
+  const clique = SELMODO ? 'selToggle' : 'ver';
+
+  return '<div class="lin'+(marcado?' sel':'')+'"'
+      + (SELMODO ? '' : ' draggable="true" ondragstart="arrastar(event,\''+i.id+'\')"') + '>'
+    + '<div class="lin-ico" onclick="'+clique+'(\''+i.id+'\')">'
+      + (SELMODO
+          ? '<div class="lin-check">'+(marcado?'✓':'')+'</div>'
+          : (i.thumb ? '<img src="'+i.thumb+'" alt="" loading="lazy">'
+                     : '<span class="ico">'+(i.tipo==='pdf'?'▤':'▨')+'</span>'))
+    + '</div>'
+    + '<div class="lin-nome" onclick="'+clique+'(\''+i.id+'\')">'
+      + '<b title="'+esc(i.nome)+'">'+esc(i.nome)+'</b>'
+      + '<div class="lin-sub">'+tam(i.tam)+' · '+quando+'</div>'
+    + '</div>'
+    + '<div class="lin-mod">'+quando+'</div>'
+    + '<div class="lin-tam">'+tam(i.tam)+econ+'</div>'
+    + '<div class="lin-acoes">'
+      + (SELMODO ? '' :
+          '<button class="ac" onclick="baixar(\''+i.id+'\')" title="Baixar pro computador">⤓<span class="rot">Baixar</span></button>'
+        + (i.tipo==='foto'
+            ? '<button class="ac" onclick="copiarImagem(\''+i.id+'\',this)" title="Copiar e colar com Ctrl+V no WhatsApp Web">⧉<span class="rot">Copiar</span></button>'
+            : '<button class="ac" onclick="copiarLink(\''+i.id+'\')" title="Copiar o link pra mandar pro cliente">⛓<span class="rot">Link</span></button>')
+        + '<button class="ac" onclick="enviarNativo(\''+i.id+'\')" title="Compartilhar (celular)">↗</button>'
+        + (EDITOR
+            ? '<button class="ac" onclick="abrirRenomear(\''+i.id+'\')" title="Renomear ou trocar de coleção">✎</button>'
+              + '<button class="ac del" onclick="excluir(\''+i.id+'\')" title="Excluir">✕</button>'
+            : ''))
+    + '</div>'
+    + '</div>';
+}
+
+/* ══════════ Seleção múltipla ══════════ */
+function alternarSelecao(){
+  if(!EDITOR) return;
+  if(SELMODO) return sairSelecao();
+  SELMODO = true;
+  SEL = Object.create(null);
+  document.body.classList.add('selmodo');
+  document.getElementById('bt-sel').textContent = '✕ Sair da seleção';
+  render();
+}
+
+function sairSelecao(){
+  SELMODO = false;
+  SEL = Object.create(null);
+  document.body.classList.remove('selmodo');
+  document.getElementById('bt-sel').textContent = '☑ Selecionar';
+  render();
+}
+
+function selToggle(id){
+  if(!SELMODO) return;
+  if(SEL[id]) delete SEL[id]; else SEL[id] = 1;
+  render();
+}
+
+function selTodos(){
+  // Respeita a busca e o filtro de coleção que estão na tela: dá pra
+  // filtrar "Verão 2025", marcar tudo e limpar a coleção inteira.
+  filtrados(TAB).forEach(function(i){ SEL[i.id] = 1; });
+  render();
+}
+
+function selNenhum(){ SEL = Object.create(null); render(); }
+
+// Só conta o que ainda existe — se outra pessoa excluiu um arquivo que
+// estava marcado aqui, o id fica pendurado em SEL e some da conta.
+function selMarcados(){
+  return Object.keys(SEL).map(acha).filter(function(i){ return i && i.tipo === TAB; });
+}
+
+function renderSelbar(){
+  const barra = document.getElementById('selbar');
+  if(!barra) return;
+  barra.classList.toggle('show', SELMODO);
+  if(!SELMODO) return;
+  const n = selMarcados().length;
+  document.getElementById('sel-cnt').textContent =
+    n ? (n + ' selecionado' + (n>1?'s':'')) : 'Nenhum selecionado';
+  document.getElementById('bt-selex').disabled = !n;
+}
+
+async function excluirSelecionados(){
+  if(!EDITOR) return;
+  const alvos = selMarcados();
+  if(!alvos.length) return;
+
+  const lista = alvos.slice(0,8).map(i=>'• '+i.nome).join('\n')
+    + (alvos.length>8 ? '\n• … e mais '+(alvos.length-8) : '');
+  if(!confirm('Excluir '+alvos.length+' arquivo'+(alvos.length>1?'s':'')+'?\n\n'+lista
+    + '\n\nSome pra todas as vendedoras na hora e não dá pra desfazer.')) return;
+
+  const bt = document.getElementById('bt-selex');
+  bt.disabled = true;
+  let ok = 0, falhou = 0;
+
+  for(let n=0; n<alvos.length; n++){
+    const i = alvos[n];
+    bt.textContent = 'Excluindo '+(n+1)+'/'+alvos.length+'…';
+    try{
+      await DB.collection(COL).doc(i.id).delete();
+      try{ await ST.ref(i.arquivo).delete(); }
+      catch(e){ console.warn('storage delete', i.nome, e); }  // índice já saiu; arquivo órfão não quebra nada
+      delete SEL[i.id];
+      ok++;
+    }catch(e){
+      console.warn('excluir', i.nome, e);
+      falhou++;
+    }
+  }
+
+  bt.textContent = '✕ Excluir selecionados';
+  if(ok)     toast(ok+' arquivo(s) excluído(s).', 'ok');
+  if(falhou) toast(falhou+' não deu pra excluir — continua(m) marcado(s).', 'err');
+  if(falhou) render(); else sairSelecao();
+}
+
 /* ══════════ Utilidades ══════════ */
 function abrirModal(id){ document.getElementById(id).classList.add('open'); }
 function fecharModal(id){ document.getElementById(id).classList.remove('open'); }
 document.addEventListener('keydown', e=>{
-  if(e.key === 'Escape') document.querySelectorAll('.mov.open').forEach(m=>m.classList.remove('open'));
+  if(e.key !== 'Escape') return;
+  const abertos = document.querySelectorAll('.mov.open');
+  if(abertos.length) return abertos.forEach(m=>m.classList.remove('open'));
+  if(SELMODO) sairSelecao();   // sem modal aberto, o Esc desfaz a seleção
 });
 
 function tam(b){
