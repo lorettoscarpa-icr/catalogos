@@ -1,0 +1,45 @@
+rules_version = '2';
+
+// ══════════════════════════════════════════════════════════════
+//  Loretto Scarpa · Catálogos — regras do Firebase Storage
+//  Onde colar: console.firebase.google.com → Storage → aba Rules
+//              (cole o arquivo INTEIRO e clique em Publicar)
+//
+//  Esta é a trava de verdade. A lista de e-mails dentro do
+//  index.html só decide quais BOTÕES aparecem; quem impede o
+//  envio e a exclusão de fato é este arquivo, no servidor.
+//  Mudou quem pode editar? Mude aqui TAMBÉM.
+// ══════════════════════════════════════════════════════════════
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function editor() {
+      return request.auth != null
+        && request.auth.token.email.lower() in [
+             'lorettoscarpa@gmail.com',
+             'lorraynelorettoscarpa@gmail.com'
+           ];
+    }
+
+    match /{pasta}/{arquivo} {
+
+      // Qualquer pessoa logada na Central vê e baixa.
+      allow read: if request.auth != null;
+
+      // Só os dois e-mails acima sobem arquivo — e no máximo 10 MB,
+      // então nem um bug no painel consegue subir um PDF gigante.
+      allow create, update: if editor()
+        && (pasta == 'catalogos' || pasta == 'fotos')
+        && request.resource.size <= 10 * 1024 * 1024;
+
+      // Só os dois e-mails acima excluem.
+      allow delete: if editor();
+    }
+
+    // Qualquer outro caminho fica fechado.
+    match /{caminho=**} {
+      allow read, write: if false;
+    }
+  }
+}

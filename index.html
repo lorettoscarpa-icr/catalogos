@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogos · Loretto Scarpa</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600&family=Barlow:wght@300;400;500;600;700&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --v0:#283d1a; --v1:#374f24; --v2:#46672f; --v3:#60813e;
+  --ou:#d4b45a; --ou2:#ebd48a; --ou3:#b08840;
+  --oud:rgba(212,180,90,.30); --oud2:rgba(212,180,90,.14);
+  --cr:#f8f3e6; --cr2:rgba(248,243,230,.78); --cr3:rgba(248,243,230,.52);
+  --ok:#5cb85c; --er:#c0504a;
+  --bg:#283d1a; --bg2:rgba(255,255,255,.025); --bgd:#1f3015;
+  --verde:#6dbf6d; --vermelho:#e07070; --amarelo:var(--ou);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Barlow',sans-serif;background:
+    radial-gradient(ellipse 120% 60% at 50% 100%, rgba(212,180,90,.06) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(74,99,48,.4) 0%, transparent 50%),
+    var(--v0);background-attachment:fixed;color:var(--cr);min-height:100vh;font-variant-numeric:lining-nums;font-feature-settings:"lnum" 1;}
+
+.head{background:rgba(0,0,0,.4);border-bottom:1px solid var(--oud2);padding:18px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px;}
+.h-bloc{display:flex;flex-direction:column;}
+.h-marca{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;letter-spacing:5px;color:var(--ou);text-transform:uppercase;line-height:1;}
+.h-sub{font-size:10px;letter-spacing:3px;color:var(--cr3);text-transform:uppercase;margin-top:6px;}
+.h-user{font-size:11px;letter-spacing:1.5px;color:var(--cr3);text-transform:uppercase;text-align:right;line-height:1.7;}
+.h-user b{color:var(--ou2);}
+.h-selo{display:inline-block;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1.2px;padding:2px 7px;border:1px solid var(--oud);color:var(--ou2);border-radius:2px;margin-top:3px;}
+.h-selo.leitura{border-color:rgba(248,243,230,.22);color:var(--cr3);}
+
+.tabnav{display:flex;gap:2px;border-bottom:1px solid var(--oud2);padding:0 24px;background:rgba(0,0,0,.2);overflow-x:auto;}
+.tabnav-btn{background:transparent;border:none;padding:14px 22px;font-size:11px;letter-spacing:2px;color:var(--cr3);cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;text-transform:uppercase;white-space:nowrap;}
+.tabnav-btn.active{color:var(--ou2);border-bottom-color:var(--ou);}
+.tabnav-btn .cnt{font-family:'DM Mono',monospace;font-size:9px;opacity:.65;margin-left:6px;}
+
+main{padding:24px;max-width:1400px;margin:0 auto;}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+.slbl{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--cr3);padding-bottom:10px;border-bottom:1px solid var(--oud2);margin:28px 0 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.slbl:first-child{margin-top:0;}
+.slbl .qtd{font-family:'DM Mono',monospace;letter-spacing:1px;opacity:.7;}
+
+/* ─── Barra de ferramentas ─── */
+.barra{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px;}
+.busca{flex:1;min-width:200px;position:relative;}
+.busca input{width:100%;background:var(--bg2);border:1px solid var(--oud2);color:var(--cr);padding:11px 13px 11px 34px;font-family:inherit;font-size:13px;border-radius:2px;}
+.busca input:focus{outline:none;border-color:var(--oud);}
+.busca input::placeholder{color:var(--cr3);}
+.busca .lupa{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;opacity:.5;pointer-events:none;}
+.sel{background:var(--bg2);border:1px solid var(--oud2);color:var(--cr2);padding:11px 12px;font-family:inherit;font-size:12px;border-radius:2px;cursor:pointer;}
+.sel:focus{outline:none;border-color:var(--oud);}
+.bt{background:transparent;border:1px solid var(--oud2);color:var(--cr2);padding:10px 15px;font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:.15s;white-space:nowrap;}
+.bt:hover:not([disabled]){border-color:var(--ou);color:var(--ou2);background:rgba(212,180,90,.07);}
+.bt[disabled]{opacity:.35;cursor:default;}
+.bt.ouro{background:var(--ou);border-color:var(--ou);color:var(--v0);font-weight:600;}
+.bt.ouro:hover:not([disabled]){background:var(--ou2);border-color:var(--ou2);color:var(--v0);}
+.bt.perigo:hover:not([disabled]){border-color:var(--vermelho);color:var(--vermelho);background:rgba(224,112,112,.08);}
+
+/* ─── Grade de arquivos ─── */
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;}
+.card{background:var(--bg2);border:1px solid var(--oud2);border-radius:3px;overflow:hidden;display:flex;flex-direction:column;transition:.15s;}
+.card:hover{border-color:var(--oud);}
+.card-capa{position:relative;aspect-ratio:3/4;background:var(--bgd);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;}
+.card.foto .card-capa{aspect-ratio:1/1;}
+.card-capa img{width:100%;height:100%;object-fit:cover;display:block;}
+.card-capa .ico{font-size:40px;opacity:.32;}
+.card-capa .lupa-ver{position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;opacity:0;transition:.15s;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ou2);}
+.card-capa:hover .lupa-ver{opacity:1;}
+.card-corpo{padding:11px 12px;flex:1;display:flex;flex-direction:column;gap:5px;}
+.card-nome{font-size:13px;line-height:1.35;color:var(--cr);word-break:break-word;}
+.card-meta{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.8px;color:var(--cr3);text-transform:uppercase;}
+.card-meta .econ{color:var(--verde);}
+.card-acoes{display:flex;gap:4px;padding:0 8px 9px;flex-wrap:wrap;}
+.ac{flex:1;min-width:0;background:transparent;border:1px solid var(--oud2);color:var(--cr2);padding:7px 4px;font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:.15s;}
+.ac:hover:not([disabled]){border-color:var(--ou);color:var(--ou2);background:rgba(212,180,90,.08);}
+.ac[disabled]{opacity:.4;cursor:default;}
+.ac.mini{flex:0 0 auto;padding:7px 9px;}
+.ac.del:hover{border-color:var(--vermelho);color:var(--vermelho);background:rgba(224,112,112,.08);}
+.card-adm{display:flex;gap:4px;padding:0 8px 9px;border-top:1px solid var(--oud2);margin:0 8px;padding-top:8px;}
+
+.vazio{background:var(--bg2);border:1px dashed var(--oud2);padding:40px 26px;text-align:center;color:var(--cr3);font-size:13.5px;line-height:1.6;border-radius:3px;}
+.vazio b{color:var(--ou2);font-weight:500;}
+
+/* ─── Modal ─── */
+.mov{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:100;padding:20px;}
+.mov.open{display:flex;}
+.modal-box{background:#26371a;border:1px solid var(--oud);max-width:620px;width:100%;max-height:90vh;overflow-y:auto;padding:24px;position:relative;box-shadow:0 14px 48px rgba(0,0,0,.55);border-radius:3px;}
+.modal-close{position:absolute;top:12px;right:16px;background:transparent;border:none;color:var(--cr3);font-size:24px;cursor:pointer;line-height:1;font-family:inherit;}
+.modal-close:hover{color:var(--cr);}
+.modal-tit{font-family:'Playfair Display',serif;font-size:22px;color:var(--ou2);margin-bottom:6px;padding-right:30px;}
+.modal-sub{font-size:11.5px;color:var(--cr3);letter-spacing:.4px;margin-bottom:18px;line-height:1.5;}
+.campo{margin-bottom:14px;}
+.campo label{display:block;font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:1.3px;text-transform:uppercase;color:var(--cr3);margin-bottom:5px;}
+.campo input[type=text]{width:100%;background:var(--bgd);border:1px solid var(--oud2);color:var(--cr);padding:11px 12px;font-family:inherit;font-size:13.5px;border-radius:2px;}
+.campo input[type=text]:focus{outline:none;border-color:var(--oud);}
+.campo .dica{font-size:11px;color:var(--cr3);margin-top:5px;line-height:1.45;}
+
+.dropzone{border:1px dashed var(--oud);background:rgba(212,180,90,.04);border-radius:3px;padding:28px 18px;text-align:center;cursor:pointer;transition:.15s;}
+.dropzone:hover,.dropzone.hover{background:rgba(212,180,90,.11);border-color:var(--ou);}
+.dropzone .dz-ico{font-size:30px;opacity:.5;}
+.dropzone .dz-t{font-size:13.5px;color:var(--cr2);margin-top:8px;}
+.dropzone .dz-s{font-size:11px;color:var(--cr3);margin-top:4px;}
+
+.fila{margin-top:14px;display:flex;flex-direction:column;gap:7px;max-height:230px;overflow-y:auto;}
+.fila-item{background:var(--bgd);border:1px solid var(--oud2);border-radius:2px;padding:9px 11px;}
+.fi-topo{display:flex;justify-content:space-between;align-items:center;gap:10px;}
+.fi-nome{font-size:12.5px;color:var(--cr2);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.fi-st{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:1px;text-transform:uppercase;color:var(--cr3);white-space:nowrap;}
+.fi-st.ok{color:var(--verde);}
+.fi-st.err{color:var(--vermelho);}
+.fi-bar{height:3px;background:rgba(0,0,0,.4);border-radius:2px;margin-top:7px;overflow:hidden;}
+.fi-bar i{display:block;height:100%;width:0;background:var(--ou);transition:width .25s;}
+.fi-rm{background:transparent;border:none;color:var(--cr3);cursor:pointer;font-size:15px;line-height:1;padding:0 3px;}
+.fi-rm:hover{color:var(--vermelho);}
+
+.lb-img{max-width:100%;max-height:76vh;display:block;margin:0 auto;border:1px solid var(--oud2);border-radius:2px;}
+
+/* ─── Toast ─── */
+#toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:#1b2a12;border:1px solid var(--oud);color:var(--cr);padding:12px 20px;border-radius:3px;font-size:13px;z-index:200;opacity:0;pointer-events:none;transition:.22s;box-shadow:0 8px 26px rgba(0,0,0,.5);max-width:90vw;text-align:center;}
+#toast.show{opacity:1;transform:translate(-50%,0);}
+#toast.err{border-color:var(--vermelho);}
+#toast.ok{border-color:var(--verde);}
+
+.aviso{background:rgba(224,112,112,.08);border:1px solid rgba(224,112,112,.4);color:#f0b8b8;padding:13px 16px;border-radius:3px;font-size:13px;line-height:1.55;margin-bottom:18px;}
+.aviso b{color:#ffd9d9;}
+.aviso code{font-family:'DM Mono',monospace;font-size:11.5px;background:rgba(0,0,0,.3);padding:1px 5px;border-radius:2px;}
+
+.gate{min-height:70vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:40px;}
+.gate-in{max-width:420px;}
+.gate-marca{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--ou2);letter-spacing:4px;text-transform:uppercase;}
+.gate-txt{margin:16px 0 20px;font-size:14px;color:var(--cr2);line-height:1.6;}
+
+.ajuda{margin-top:34px;border-top:1px solid var(--oud2);padding-top:18px;}
+.ajuda-t{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:2px;text-transform:uppercase;color:var(--cr3);margin-bottom:10px;}
+.ajuda ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:9px 22px;}
+.ajuda li{font-size:12.5px;color:var(--cr3);line-height:1.55;padding-left:16px;position:relative;}
+.ajuda li::before{content:'·';position:absolute;left:4px;color:var(--ou);font-size:16px;line-height:1.1;}
+.ajuda li b{color:var(--cr2);font-weight:500;}
+
+@media(max-width:640px){
+  main{padding:16px;}
+  .head{padding:14px 16px;}
+  .tabnav{padding:0 10px;}
+  .tabnav-btn{padding:13px 14px;}
+  .grade{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+}
+</style>
+<!-- Firebase (compat) · mesma conta/login da Central Loretto Scarpa -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+</head>
+<body>
+
+<div class="head">
+  <div class="h-bloc">
+    <div class="h-marca">Loretto Scarpa</div>
+    <div class="h-sub">Catálogos &amp; Coleções</div>
+  </div>
+  <div class="h-user">
+    <b id="hu-nome">…</b><br>
+    <span class="h-selo leitura" id="hu-selo">Carregando</span>
+  </div>
+</div>
+
+<div class="tabnav" id="tabnav" hidden>
+  <button class="tabnav-btn active" onclick="abrirTab('pdf',this)">Catálogos <span class="cnt" id="cnt-pdf"></span></button>
+  <button class="tabnav-btn" onclick="abrirTab('foto',this)">Fotos das Coleções <span class="cnt" id="cnt-foto"></span></button>
+</div>
+
+<main>
+  <div id="gate" class="gate"><div class="gate-in">
+    <div class="gate-marca">Loretto Scarpa</div>
+    <div class="gate-txt" id="gate-txt">Conectando com a sua conta…</div>
+  </div></div>
+
+  <div id="app" hidden>
+    <div id="aviso-storage"></div>
+
+    <div class="barra">
+      <div class="busca"><span class="lupa">⌕</span><input type="text" id="busca" placeholder="Buscar por nome ou coleção…" oninput="render()"></div>
+      <select class="sel" id="filtro-col" onchange="render()"><option value="">Todas as coleções</option></select>
+      <button class="bt" id="bt-zip" onclick="baixarFiltrados()">⤓ Baixar tudo (.zip)</button>
+      <button class="bt ouro" id="bt-subir" onclick="abrirUpload()" hidden>+ Subir arquivos</button>
+    </div>
+
+    <div class="tab-content active" id="tab-pdf"><div id="lista-pdf"></div></div>
+    <div class="tab-content" id="tab-foto"><div id="lista-foto"></div></div>
+
+    <div class="ajuda">
+      <div class="ajuda-t">Como mandar pro cliente no WhatsApp</div>
+      <ul>
+        <li><b>Foto, no computador:</b> clique em <b>Copiar</b>, abra a conversa no WhatsApp Web e dê <b>Ctrl+V</b>. A foto vai direto, sem abrir pasta nenhuma.</li>
+        <li><b>Catálogo PDF, no computador:</b> clique em <b>Baixar</b> e depois anexe pelo clipe do WhatsApp — o arquivo cai na sua pasta de downloads.</li>
+        <li><b>Sem baixar nada:</b> clique em <b>Link</b> e cole na conversa. O cliente abre o catálogo no navegador dele.</li>
+        <li><b>No celular:</b> clique em <b>Enviar</b> — abre o compartilhamento do próprio celular e você escolhe o WhatsApp e o contato.</li>
+        <li><b>Dica:</b> configure o Chrome pra baixar sempre na mesma pasta (Configurações › Downloads › Local). Aí o anexo do WhatsApp já abre nela, igual à pasta de hoje.</li>
+        <li><b>Arrastar:</b> se estiver com o WhatsApp Web numa janela ao lado, dá pra arrastar o card direto pra conversa.</li>
+      </ul>
+    </div>
+  </div>
+</main>
+
+<!-- Modal: subir arquivos -->
+<div class="mov" id="mov-up">
+  <div class="modal-box">
+    <button class="modal-close" onclick="fecharModal('mov-up')">&times;</button>
+    <div class="modal-tit" id="up-tit">Subir catálogos</div>
+    <div class="modal-sub" id="up-sub"></div>
+
+    <div class="campo">
+      <label>Coleção</label>
+      <input type="text" id="up-col" list="dl-col" placeholder="Ex.: Verão 2026" autocomplete="off">
+      <datalist id="dl-col"></datalist>
+      <div class="dica">Agrupa os arquivos no painel. Se deixar em branco, entra em “Sem coleção”.</div>
+    </div>
+
+    <div class="dropzone" id="dz" onclick="document.getElementById('up-file').click()">
+      <div class="dz-ico">⇪</div>
+      <div class="dz-t" id="dz-t">Clique aqui ou arraste os arquivos</div>
+      <div class="dz-s" id="dz-s"></div>
+    </div>
+    <input type="file" id="up-file" multiple hidden onchange="filaAdd(this.files);this.value='';">
+
+    <div class="fila" id="fila"></div>
+
+    <div style="display:flex;gap:8px;margin-top:18px;justify-content:flex-end;">
+      <button class="bt" onclick="fecharModal('mov-up')">Cancelar</button>
+      <button class="bt ouro" id="bt-enviar" onclick="enviarFila()" disabled>Enviar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: renomear -->
+<div class="mov" id="mov-ren">
+  <div class="modal-box" style="max-width:460px;">
+    <button class="modal-close" onclick="fecharModal('mov-ren')">&times;</button>
+    <div class="modal-tit">Editar arquivo</div>
+    <div class="modal-sub">Muda como ele aparece pra todo mundo. O arquivo em si continua o mesmo.</div>
+    <div class="campo"><label>Nome</label><input type="text" id="ren-nome"></div>
+    <div class="campo"><label>Coleção</label><input type="text" id="ren-col" list="dl-col" autocomplete="off"></div>
+    <div style="display:flex;gap:8px;margin-top:18px;justify-content:flex-end;">
+      <button class="bt" onclick="fecharModal('mov-ren')">Cancelar</button>
+      <button class="bt ouro" onclick="salvarRenomear()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div class="mov" id="mov-lb" onclick="if(event.target===this)fecharModal('mov-lb')">
+  <div class="modal-box" style="max-width:900px;background:#1b2a12;">
+    <button class="modal-close" onclick="fecharModal('mov-lb')">&times;</button>
+    <div class="modal-tit" id="lb-tit" style="font-size:17px;"></div>
+    <div class="modal-sub" id="lb-sub"></div>
+    <img class="lb-img" id="lb-img" alt="">
+    <div style="display:flex;gap:8px;margin-top:16px;justify-content:center;flex-wrap:wrap;" id="lb-acoes"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   CATÁLOGOS · Loretto Scarpa
+   Mesmo projeto Firebase da Central (login único).
+   Arquivos: Firebase Storage · Índice: Firestore (ls_catalogos)
+   ══════════════════════════════════════════════════════════ */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCogQoTSULCdC1JhTb0IUilWAIA1itBJ8U",
+  authDomain: "loretto-scarpa-l-icr.firebaseapp.com",
+  projectId: "loretto-scarpa-l-icr",
+  storageBucket: "loretto-scarpa-l-icr.firebasestorage.app",
+  messagingSenderId: "428188657366",
+  appId: "1:428188657366:web:2fcf929080a9f78b83cb77"
+};
+
+/* ─────────────────────────────────────────────────────────
+   QUEM PODE SUBIR / EDITAR / EXCLUIR
+   Todo mundo que tem login da Central VÊ e BAIXA.
+   Só os e-mails abaixo podem subir, renomear e excluir.
+   Pra mudar depois: edite só esta lista (e as regras do
+   Firebase Storage/Firestore, que repetem os mesmos e-mails).
+   ───────────────────────────────────────────────────────── */
+const EDITORES = [
+  'lorettoscarpa@gmail.com',            // Gestão · Loretto Scarpa
+  'lorraynelorettoscarpa@gmail.com'     // Lorrayne
+];
+const NOMES = {
+  'lorettoscarpa@gmail.com':         'Gestão',
+  'lorraynelorettoscarpa@gmail.com': 'Lorrayne'
+};
+
+const CENTRAL   = 'https://lorettoscarpa-icr.github.io/central/';
+const LIM_PDF   = 10 * 1024 * 1024;   // 10 MB — teto pedido pra catálogo
+const LIM_FOTO  =  2 * 1024 * 1024;   // 2 MB  — foto de coleção, sobra qualidade
+const COL       = 'ls_catalogos';
+
+let DB=null, AUTH=null, ST=null;
+let SESSION=null, EDITOR=false, ITENS=[], TAB='pdf', _authOk=false;
+
+try{
+  firebase.initializeApp(firebaseConfig);
+  AUTH = firebase.auth();
+  DB   = firebase.firestore();
+  ST   = firebase.storage();
+}catch(e){ console.warn('Firebase indisponível', e); }
+
+/* ══════════ Login ══════════ */
+const EM_IFRAME = (function(){ try{ return window.self !== window.top; }catch(e){ return true; } })();
+
+if(AUTH){
+  AUTH.onAuthStateChanged(function(user){
+    if(!user){
+      // A primeira chamada costuma vir sem usuário enquanto o Firebase
+      // restaura a sessão — só desiste depois que ela realmente não veio.
+      if(EM_IFRAME) return;
+      setTimeout(function(){ if(!_authOk && !AUTH.currentUser) semLogin(); }, 2500);
+      return;
+    }
+    _authOk = true;
+    SESSION = user;
+    const email = (user.email||'').toLowerCase();
+    EDITOR = EDITORES.indexOf(email) >= 0;
+
+    const nome = NOMES[email] || (user.displayName||'').split(' ')[0] || email.split('@')[0];
+    document.getElementById('hu-nome').textContent = String(nome).toUpperCase();
+    const selo = document.getElementById('hu-selo');
+    selo.textContent = EDITOR ? 'Pode editar' : 'Ver e baixar';
+    selo.className = 'h-selo' + (EDITOR ? '' : ' leitura');
+
+    document.getElementById('gate').hidden = true;
+    document.getElementById('app').hidden  = false;
+    document.getElementById('tabnav').hidden = false;
+    document.getElementById('bt-subir').hidden = !EDITOR;
+
+    escutar();
+  });
+}else{
+  semLogin('Não consegui carregar o Firebase. Verifique a conexão.');
+}
+
+function semLogin(msg){
+  document.getElementById('gate-txt').innerHTML =
+    (msg || 'Você precisa entrar pela Central pra ver os catálogos.')
+    + '<br><br><a href="'+CENTRAL+'" style="display:inline-block;background:#d4b45a;color:#283d1a;padding:12px 26px;border-radius:3px;text-decoration:none;font-weight:600;letter-spacing:1px;text-transform:uppercase;font-size:11px;">Ir pra Central</a>';
+}
+
+/* ══════════ Tempo real ══════════ */
+function escutar(){
+  DB.collection(COL).orderBy('criadoEm','desc').onSnapshot(function(snap){
+    ITENS = snap.docs.map(function(d){ const o=d.data(); o.id=d.id; return o; });
+    montarFiltroColecoes();
+    render();
+  }, function(err){
+    console.warn('onSnapshot', err);
+    document.getElementById('lista-'+TAB).innerHTML =
+      '<div class="vazio">Não consegui ler a lista agora.<br><b>'+esc(err.code||err.message)+'</b></div>';
+  });
+}
+
+/* ══════════ Render ══════════ */
+function abrirTab(t, btn){
+  TAB = t;
+  document.querySelectorAll('.tabnav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  document.getElementById('tab-'+t).classList.add('active');
+  render();
+}
+
+function filtrados(tipo){
+  const q   = (document.getElementById('busca').value||'').trim().toLowerCase();
+  const col = document.getElementById('filtro-col').value;
+  return ITENS.filter(function(i){
+    if(i.tipo !== tipo) return false;
+    if(col && (i.colecao||'') !== col) return false;
+    if(q && (i.nome+' '+(i.colecao||'')).toLowerCase().indexOf(q) < 0) return false;
+    return true;
+  });
+}
+
+// Repinta SEMPRE as duas abas. Se pintasse só a ativa, a outra ficaria com
+// HTML velho — mostrando arquivo já excluído, ou botão de excluir pra quem
+// não pode — até alguém trocar de aba.
+function render(){
+  document.getElementById('cnt-pdf').textContent  = ITENS.filter(i=>i.tipo==='pdf').length  || '';
+  document.getElementById('cnt-foto').textContent = ITENS.filter(i=>i.tipo==='foto').length || '';
+  ['pdf','foto'].forEach(renderLista);
+  document.getElementById('bt-zip').disabled = !filtrados(TAB).length;
+}
+
+function renderLista(tipo){
+  const lista = filtrados(tipo);
+  const alvo  = document.getElementById('lista-'+tipo);
+
+  if(!lista.length){
+    const temAlgum = ITENS.some(i=>i.tipo===tipo);
+    alvo.innerHTML = '<div class="vazio">'
+      + (temAlgum
+          ? 'Nenhum arquivo bate com essa busca.'
+          : (tipo==='pdf'
+              ? 'Ainda não tem nenhum catálogo aqui.'
+              : 'Ainda não tem nenhuma foto de coleção aqui.')
+            + (EDITOR ? '<br><b>Clique em “Subir arquivos” pra começar.</b>'
+                      : '<br>Assim que a gestão subir, aparece aqui na hora.'))
+      + '</div>';
+    return;
+  }
+
+  // agrupa por coleção, mantendo a ordem de recência que veio do Firestore
+  const grupos = [];
+  const idx = {};
+  lista.forEach(function(i){
+    const c = i.colecao || 'Sem coleção';
+    if(idx[c] === undefined){ idx[c] = grupos.length; grupos.push({nome:c, itens:[]}); }
+    grupos[idx[c]].itens.push(i);
+  });
+
+  alvo.innerHTML = grupos.map(function(g){
+    return '<div class="slbl"><span>'+esc(g.nome)+'</span>'
+         + '<span class="qtd">'+g.itens.length+' '+(tipo==='pdf'?'catálogo':'foto')+(g.itens.length>1?'s':'')+'</span></div>'
+         + '<div class="grade">' + g.itens.map(card).join('') + '</div>';
+  }).join('');
+}
+
+function card(i){
+  const capa = i.thumb
+    ? '<img src="'+i.thumb+'" alt="" loading="lazy">'
+    : '<span class="ico">'+(i.tipo==='pdf'?'▤':'▨')+'</span>';
+  const quando = i.criadoEm && i.criadoEm.toDate
+    ? i.criadoEm.toDate().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'})
+    : '';
+  const econ = (i.tamOrig && i.tamOrig > i.tam*1.15)
+    ? ' · <span class="econ">−'+Math.round((1-i.tam/i.tamOrig)*100)+'%</span>' : '';
+
+  return '<div class="card '+i.tipo+'" draggable="true" ondragstart="arrastar(event,\''+i.id+'\')">'
+    + '<div class="card-capa" onclick="ver(\''+i.id+'\')">'+capa+'<div class="lupa-ver">Ver</div></div>'
+    + '<div class="card-corpo">'
+      + '<div class="card-nome">'+esc(i.nome)+'</div>'
+      + '<div class="card-meta">'+tam(i.tam)+econ+(quando?' · '+quando:'')+'</div>'
+    + '</div>'
+    + '<div class="card-acoes">'
+      + '<button class="ac" onclick="baixar(\''+i.id+'\')" title="Baixar pro computador">⤓ Baixar</button>'
+      + (i.tipo==='foto'
+          ? '<button class="ac" onclick="copiarImagem(\''+i.id+'\',this)" title="Copiar e colar com Ctrl+V no WhatsApp Web">⧉ Copiar</button>'
+          : '<button class="ac" onclick="copiarLink(\''+i.id+'\')" title="Copiar o link pra mandar pro cliente">⛓ Link</button>')
+      + '<button class="ac mini" onclick="enviarNativo(\''+i.id+'\')" title="Compartilhar (celular)">↗</button>'
+    + '</div>'
+    + (EDITOR
+        ? '<div class="card-adm">'
+          + '<button class="ac" onclick="abrirRenomear(\''+i.id+'\')">✎ Editar</button>'
+          + '<button class="ac del" onclick="excluir(\''+i.id+'\')">✕ Excluir</button>'
+          + '</div>'
+        : '')
+    + '</div>';
+}
+
+function montarFiltroColecoes(){
+  const cols = [];
+  ITENS.forEach(function(i){ const c=i.colecao||''; if(c && cols.indexOf(c)<0) cols.push(c); });
+  cols.sort(function(a,b){ return a.localeCompare(b,'pt-BR'); });
+
+  const sel = document.getElementById('filtro-col');
+  const atual = sel.value;
+  sel.innerHTML = '<option value="">Todas as coleções</option>'
+    + cols.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join('');
+  if(cols.indexOf(atual)>=0) sel.value = atual;
+
+  document.getElementById('dl-col').innerHTML = cols.map(c=>'<option value="'+esc(c)+'">').join('');
+}
+
+/* ══════════ Ações do arquivo ══════════ */
+function acha(id){ return ITENS.filter(i=>i.id===id)[0]; }
+
+function ver(id){
+  const i = acha(id); if(!i) return;
+  if(i.tipo === 'pdf'){ window.open(i.url, '_blank', 'noopener'); return; }
+  document.getElementById('lb-tit').textContent = i.nome;
+  document.getElementById('lb-sub').textContent = (i.colecao||'Sem coleção') + ' · ' + tam(i.tam);
+  document.getElementById('lb-img').src = i.url;
+  document.getElementById('lb-acoes').innerHTML =
+      '<button class="bt" onclick="baixar(\''+i.id+'\')">⤓ Baixar</button>'
+    + '<button class="bt" onclick="copiarImagem(\''+i.id+'\',this)">⧉ Copiar imagem</button>'
+    + '<button class="bt" onclick="copiarLink(\''+i.id+'\')">⛓ Copiar link</button>';
+  abrirModal('mov-lb');
+}
+
+async function blobDe(i){
+  const r = await fetch(i.url);
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  return await r.blob();
+}
+
+async function baixar(id){
+  const i = acha(id); if(!i) return;
+  try{
+    const b = await blobDe(i);
+    const u = URL.createObjectURL(b);
+    const a = document.createElement('a');
+    a.href = u; a.download = nomeArquivo(i);
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(u), 4000);
+    toast('Baixado: '+nomeArquivo(i), 'ok');
+  }catch(e){
+    console.warn('baixar', e);
+    window.open(i.url, '_blank', 'noopener');
+  }
+}
+
+// Copia a foto pro clipboard → Ctrl+V direto na conversa do WhatsApp Web.
+// O clipboard do navegador só aceita PNG, então reconverte antes de copiar.
+async function copiarImagem(id, btn){
+  const i = acha(id); if(!i) return;
+  if(!navigator.clipboard || !window.ClipboardItem){
+    toast('Este navegador não copia imagem. Use “Baixar”.', 'err'); return;
+  }
+  const txt = btn ? btn.textContent : '';
+  if(btn){ btn.disabled = true; btn.textContent = '…'; }
+  try{
+    const b   = await blobDe(i);
+    const png = await paraPNG(b);
+    await navigator.clipboard.write([ new ClipboardItem({'image/png': png}) ]);
+    toast('Foto copiada! Vá no WhatsApp e dê Ctrl+V.', 'ok');
+  }catch(e){
+    console.warn('copiarImagem', e);
+    toast('Não consegui copiar. Use “Baixar”.', 'err');
+  }finally{
+    if(btn){ btn.disabled = false; btn.textContent = txt; }
+  }
+}
+
+function paraPNG(blob){
+  return new Promise(function(res, rej){
+    const img = new Image();
+    img.onload = function(){
+      const cv = document.createElement('canvas');
+      cv.width = img.naturalWidth; cv.height = img.naturalHeight;
+      const cx = cv.getContext('2d');
+      cx.fillStyle = '#fff'; cx.fillRect(0,0,cv.width,cv.height);
+      cx.drawImage(img, 0, 0);
+      cv.toBlob(function(b){ b ? res(b) : rej(new Error('toBlob falhou')); }, 'image/png');
+    };
+    img.onerror = rej;
+    img.src = URL.createObjectURL(blob);
+  });
+}
+
+async function copiarLink(id){
+  const i = acha(id); if(!i) return;
+  try{
+    await navigator.clipboard.writeText(i.url);
+    toast('Link copiado! É só colar na conversa.', 'ok');
+  }catch(e){
+    prompt('Copie o link:', i.url);
+  }
+}
+
+// Celular: abre o compartilhamento nativo (WhatsApp, e-mail, etc.)
+async function enviarNativo(id){
+  const i = acha(id); if(!i) return;
+  try{
+    const b = await blobDe(i);
+    const f = new File([b], nomeArquivo(i), {type: b.type || i.mime || 'application/octet-stream'});
+    if(navigator.canShare && navigator.canShare({files:[f]})){
+      await navigator.share({files:[f], title: i.nome});
+      return;
+    }
+    if(navigator.share){ await navigator.share({title: i.nome, url: i.url}); return; }
+    copiarLink(id);
+  }catch(e){
+    if(e && e.name === 'AbortError') return;   // usuário fechou o menu
+    console.warn('enviarNativo', e);
+    copiarLink(id);
+  }
+}
+
+// Arrastar o card pra fora do navegador (WhatsApp Web ao lado, pasta, e-mail…)
+function arrastar(ev, id){
+  const i = acha(id); if(!i) return;
+  const mime = i.mime || (i.tipo==='pdf' ? 'application/pdf' : 'image/jpeg');
+  try{ ev.dataTransfer.setData('DownloadURL', mime+':'+nomeArquivo(i)+':'+i.url); }catch(e){}
+  ev.dataTransfer.setData('text/uri-list', i.url);
+  ev.dataTransfer.setData('text/plain', i.url);
+}
+
+function nomeArquivo(i){
+  const base = String(i.nome||'arquivo').replace(/[\\/:*?"<>|]/g,'-').trim();
+  const ext  = i.ext || (i.tipo==='pdf' ? 'pdf' : 'jpg');
+  return base.toLowerCase().endsWith('.'+ext) ? base : base+'.'+ext;
+}
+
+/* ══════════ Baixar tudo (.zip) ══════════ */
+async function baixarFiltrados(){
+  const lista = filtrados(TAB);
+  if(!lista.length) return;
+  const bt = document.getElementById('bt-zip');
+  const txt = bt.textContent;
+  bt.disabled = true;
+  try{
+    bt.textContent = 'Preparando…';
+    await carregarLib('JSZip','https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
+    const zip = new JSZip();
+    for(let n=0; n<lista.length; n++){
+      bt.textContent = 'Baixando '+(n+1)+'/'+lista.length+'…';
+      const b = await blobDe(lista[n]);
+      const pasta = (lista[n].colecao || 'Sem coleção').replace(/[\\/:*?"<>|]/g,'-');
+      zip.folder(pasta).file(nomeArquivo(lista[n]), b);
+    }
+    bt.textContent = 'Compactando…';
+    const out = await zip.generateAsync({type:'blob'});
+    const col = document.getElementById('filtro-col').value;
+    const u = URL.createObjectURL(out);
+    const a = document.createElement('a');
+    a.href = u;
+    a.download = 'loretto-'+(TAB==='pdf'?'catalogos':'fotos')+(col?'-'+col.replace(/[\\/:*?"<>|\s]+/g,'-'):'')+'.zip';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(u), 6000);
+    toast(lista.length+' arquivo(s) no .zip.', 'ok');
+  }catch(e){
+    console.warn('zip', e);
+    toast('Não consegui montar o .zip agora.', 'err');
+  }finally{
+    bt.disabled = false; bt.textContent = txt;
+  }
+}
+
+/* ══════════ Subir (só editores) ══════════ */
+let FILA = [];
+
+function abrirUpload(){
+  if(!EDITOR) return;
+  FILA = [];
+  const pdf = TAB === 'pdf';
+  document.getElementById('up-tit').textContent = pdf ? 'Subir catálogos' : 'Subir fotos da coleção';
+  document.getElementById('up-sub').innerHTML = pdf
+    ? 'Arquivos <b>PDF</b>. Acima de <b>'+tam(LIM_PDF)+'</b> o painel comprime sozinho antes de enviar.'
+    : 'Imagens <b>PNG, JPG ou WEBP</b>. São redimensionadas e comprimidas pra ficar leves de mandar no WhatsApp.';
+  document.getElementById('up-file').accept = pdf ? 'application/pdf,.pdf' : 'image/*';
+  document.getElementById('dz-s').textContent = pdf ? 'Só PDF' : 'PNG, JPG ou WEBP';
+  document.getElementById('up-col').value = document.getElementById('filtro-col').value || '';
+  document.getElementById('fila').innerHTML = '';
+  document.getElementById('bt-enviar').disabled = true;
+  document.getElementById('bt-enviar').textContent = 'Enviar';
+  abrirModal('mov-up');
+}
+
+(function(){
+  const dz = document.getElementById('dz');
+  ['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev, e=>{ e.preventDefault(); dz.classList.add('hover'); }));
+  ['dragleave','drop'].forEach(ev=>dz.addEventListener(ev, e=>{ e.preventDefault(); dz.classList.remove('hover'); }));
+  dz.addEventListener('drop', e=>{ if(e.dataTransfer && e.dataTransfer.files) filaAdd(e.dataTransfer.files); });
+})();
+
+function filaAdd(files){
+  const pdf = TAB === 'pdf';
+  let ignorados = 0;
+  Array.prototype.forEach.call(files, function(f){
+    const ehPdf = /pdf$/i.test(f.type) || /\.pdf$/i.test(f.name);
+    const ehImg = /^image\//i.test(f.type);
+    if(pdf ? !ehPdf : !ehImg){ ignorados++; return; }
+    FILA.push({file:f, nome:f.name.replace(/\.[^.]+$/,''), st:'fila', pct:0, det:''});
+  });
+  if(ignorados) toast(ignorados+' arquivo(s) do tipo errado foram ignorados.', 'err');
+  renderFila();
+}
+
+function filaRm(n){ FILA.splice(n,1); renderFila(); }
+
+function renderFila(){
+  document.getElementById('fila').innerHTML = FILA.map(function(f,n){
+    const cls = f.st==='ok' ? 'ok' : (f.st==='err' ? 'err' : '');
+    const rot = {fila:tam(f.file.size), comprimindo:(f.det||'Comprimindo…'), enviando:'Enviando '+f.pct+'%', ok:'✓ Pronto', err:'✕ '+(f.erro||'Falhou')}[f.st];
+    return '<div class="fila-item"><div class="fi-topo">'
+      + '<span class="fi-nome">'+esc(f.nome)+'</span>'
+      + '<span class="fi-st '+cls+'">'+esc(rot)+'</span>'
+      + (f.st==='fila' ? '<button class="fi-rm" onclick="filaRm('+n+')" title="Tirar da lista">&times;</button>' : '')
+      + '</div>'
+      + (f.st==='enviando'||f.st==='comprimindo' ? '<div class="fi-bar"><i style="width:'+(f.st==='comprimindo'?35:f.pct)+'%"></i></div>' : '')
+      + '</div>';
+  }).join('');
+  const pend = FILA.filter(f=>f.st==='fila').length;
+  document.getElementById('bt-enviar').disabled = !pend;
+  document.getElementById('dz-t').textContent = FILA.length
+    ? 'Adicionar mais arquivos' : 'Clique aqui ou arraste os arquivos';
+}
+
+async function enviarFila(){
+  if(!EDITOR) return;
+  const colecao = (document.getElementById('up-col').value||'').trim();
+  const tipo    = TAB;
+  const bt      = document.getElementById('bt-enviar');
+  bt.disabled = true; bt.textContent = 'Enviando…';
+
+  let ok = 0, falhou = 0;
+  for(let n=0; n<FILA.length; n++){
+    const f = FILA[n];
+    if(f.st !== 'fila') continue;
+    try{
+      f.st = 'comprimindo'; f.det = ''; renderFila();
+      const prep = tipo==='pdf'
+        ? await prepararPDF(f.file, function(txt){ f.det = txt; renderFila(); })
+        : await prepararFoto(f.file);
+      f.det = '';
+
+      f.st = 'enviando'; f.pct = 0; renderFila();
+      const id   = DB.collection(COL).doc().id;
+      const ext  = prep.ext;
+      const path = (tipo==='pdf'?'catalogos/':'fotos/') + id + '.' + ext;
+      const ref  = ST.ref(path);
+
+      await new Promise(function(res, rej){
+        const task = ref.put(prep.blob, {
+          contentType: prep.blob.type,
+          customMetadata: { nome: f.nome, colecao: colecao, porEmail: (SESSION.email||'') }
+        });
+        task.on('state_changed',
+          s => { f.pct = Math.round(s.bytesTransferred / s.totalBytes * 100); renderFila(); },
+          rej, res);
+      });
+
+      const url = await ref.getDownloadURL();
+      await DB.collection(COL).doc(id).set({
+        tipo: tipo, nome: f.nome, colecao: colecao,
+        arquivo: path, url: url, ext: ext, mime: prep.blob.type,
+        tam: prep.blob.size, tamOrig: f.file.size,
+        thumb: prep.thumb || null,
+        criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
+        criadoPor: NOMES[(SESSION.email||'').toLowerCase()] || SESSION.displayName || SESSION.email,
+        criadoPorEmail: (SESSION.email||'').toLowerCase()
+      });
+
+      f.st = 'ok'; ok++;
+    }catch(e){
+      console.warn('enviar', f.nome, e);
+      f.st = 'err'; f.erro = msgErro(e); falhou++;
+    }
+    renderFila();
+  }
+
+  bt.textContent = 'Enviar';
+  renderFila();
+  if(ok)     toast(ok+' arquivo(s) no ar pra todo mundo.', 'ok');
+  if(falhou) toast(falhou+' arquivo(s) não subiram. Veja a lista.', 'err');
+  if(ok && !falhou) setTimeout(()=>fecharModal('mov-up'), 900);
+}
+
+function msgErro(e){
+  const c = (e && e.code) || '';
+  if(c === 'storage/unauthorized')  return 'Sem permissão';
+  if(c === 'storage/quota-exceeded')return 'Cota cheia';
+  if(c === 'storage/retry-limit-exceeded') return 'Conexão caiu';
+  if(c === 'permission-denied')     return 'Sem permissão';
+  return (e && e.message ? String(e.message).slice(0,40) : 'Falhou');
+}
+
+/* ══════════ Compressão ══════════ */
+
+// Carrega uma biblioteca do CDN só quando ela é realmente necessária.
+const _libs = {};
+function carregarLib(global, src){
+  if(window[global]) return Promise.resolve();
+  if(_libs[src]) return _libs[src];
+  _libs[src] = new Promise(function(res, rej){
+    const s = document.createElement('script');
+    s.src = src; s.onload = res;
+    s.onerror = () => rej(new Error('Não carregou '+src));
+    document.head.appendChild(s);
+  });
+  return _libs[src];
+}
+
+// ── Compressão de PDF ──────────────────────────────────────
+// Estratégia, do menos pro mais destrutivo. Para no primeiro
+// passo que couber no teto.
+//
+//   0. Já cabe          → sobe o arquivo original, intacto.
+//   1. Reempacotar      → só arruma o encanamento do PDF
+//                         (xref comprimido, objeto morto fora).
+//                         Nenhum pixel é tocado.
+//   2. Só as imagens    → mantém o PDF de pé e recomprime APENAS
+//                         as fotos embutidas. Texto, vetor e fonte
+//                         continuam vetoriais — nítidos em qualquer
+//                         zoom. É daqui que vem quase toda a economia.
+//   3. Rasterizar       → último recurso. Achata a página em foto e
+//                         o texto perde nitidez. Só roda se 1 e 2
+//                         não deram conta.
+//
+// O passo 2 é o que substituiu a versão antiga, que rasterizava
+// de cara: aquilo borrava o texto E recomprimia as fotos por cima
+// de uma imagem já achatada — perda dupla, sem necessidade.
+async function prepararPDF(file, aviso){
+  const diz = aviso || function(){};
+  await libPdfJs();
+
+  const buf = await file.arrayBuffer();
+  const doc = await pdfjsLib.getDocument({data: buf.slice(0)}).promise;
+  const thumb = await capaPDF(doc);
+
+  // 0 · já cabe
+  if(file.size <= LIM_PDF) return {blob:file, ext:'pdf', thumb:thumb, via:'intacto'};
+
+  let melhor = file, via = 'intacto';
+  const guarda = function(b, rot){
+    if(b && b.size < melhor.size){ melhor = b; via = rot; }
+    return b && b.size <= LIM_PDF;
+  };
+
+  // 1 · reempacotar, sem tocar em pixel
+  try{
+    diz('Reempacotando…');
+    const b = await pdfReempacotar(buf);
+    if(guarda(b, 'reempacotado')) return {blob:melhor, ext:'pdf', thumb:thumb, via:via};
+  }catch(e){ console.warn('reempacotar', e); }
+
+  // 2 · recomprimir só as imagens, texto continua vetorial
+  // Cada passo parte SEMPRE do arquivo original — nunca recomprime
+  // em cima do que já foi comprimido, que é o que empilha perda.
+  // Alvo em DPI *no tamanho em que a imagem aparece na página* — e não
+  // em pixel absoluto. Uma foto de 3400 px num quadro de 5 cm está em
+  // ~1200 DPI: dá pra cortar 80% do peso sem tirar um fio de nitidez.
+  // 200 DPI já é qualidade de impressão; na tela ninguém distingue.
+  const passos = [
+    {dpi:200, q:.90}, {dpi:170, q:.88}, {dpi:150, q:.85},
+    {dpi:130, q:.80}, {dpi:110, q:.74}
+  ];
+  for(let n=0; n<passos.length; n++){
+    try{
+      diz('Otimizando imagens ' + (n+1) + '/' + passos.length + '…');
+      const b = await pdfRecomprimirImagens(buf, passos[n].dpi, passos[n].q);
+      if(guarda(b, 'imagens')) return {blob:melhor, ext:'pdf', thumb:thumb, via:via};
+      // Se um passo mais agressivo não encolheu nada, os passos
+      // seguintes também não vão — o peso não está nas imagens.
+      if(b && n > 0 && b.size > melhor.size * 0.97) break;
+    }catch(e){ console.warn('recomprimir imagens', e); break; }
+  }
+
+  // 3 · último recurso: achatar a página
+  try{
+    await carregarLib('jspdf','https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+    const raster = [[150,.82],[130,.74],[110,.66],[96,.58],[80,.48]];
+    for(let n=0; n<raster.length; n++){
+      diz('Achatando páginas ' + (n+1) + '/' + raster.length + '…');
+      const b = await rasterizar(doc, raster[n][0], raster[n][1]);
+      if(guarda(b, 'rasterizado')) return {blob:melhor, ext:'pdf', thumb:thumb, via:via};
+    }
+  }catch(e){ console.warn('rasterizar', e); }
+
+  // Nada coube no teto — manda o menor que conseguimos.
+  return {blob:melhor, ext:'pdf', thumb:thumb, via:via};
+}
+
+function libPdfJs(){
+  return carregarLib('pdfjsLib','https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js')
+    .then(function(){
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    });
+}
+function libPdfLib(){
+  return carregarLib('PDFLib','https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js');
+}
+function abrirPdfLib(buf){
+  return PDFLib.PDFDocument.load(buf.slice(0), {ignoreEncryption:true, updateMetadata:false});
+}
+function salvarPdfLib(doc){
+  return doc.save({useObjectStreams:true})
+            .then(b => new Blob([b], {type:'application/pdf'}));
+}
+
+// Passo 1 — reescreve a estrutura do PDF sem mexer no conteúdo.
+async function pdfReempacotar(buf){
+  await libPdfLib();
+  return salvarPdfLib(await abrirPdfLib(buf));
+}
+
+// Passo 2 — troca cada imagem embutida por uma versão menor.
+// Texto, fontes e vetores nem são visitados: continuam intactos.
+async function pdfRecomprimirImagens(buf, dpi, q){
+  await libPdfLib();
+  const N = PDFLib.PDFName, doc = await abrirPdfLib(buf);
+  const imgs = pdfImagens(doc);
+  if(!imgs.length) return null;
+
+  const uso = pdfMedirUso(doc);   // quanto cada imagem ocupa na página, em pontos
+
+  let trocadas = 0;
+  for(let n=0; n<imgs.length; n++){
+    const it = imgs[n];
+    let bmp = null;
+    try{
+      bmp = await pdfDecodificar(it);
+      if(!bmp) continue;
+
+      // Quantos pixels a imagem PRECISA ter pro DPI alvo, no tamanho
+      // em que ela realmente aparece. Sem medida confiável, cai num
+      // teto absoluto conservador.
+      const pt = uso[it.ref.toString()];
+      const px = pt
+        ? Math.max(320, Math.ceil(Math.max(pt.w, pt.h) / 72 * dpi))
+        : Math.round(dpi * 12);
+      const novo = await recodificar(bmp, px, q);
+      // Só troca se realmente encolheu. Imagem já bem comprimida
+      // fica como está — recomprimir só perderia qualidade à toa.
+      if(novo.bytes.length >= it.bytes.length) continue;
+
+      const d = it.dict;
+      d.set(N.of('Filter'),           N.of('DCTDecode'));
+      d.set(N.of('Width'),            PDFLib.PDFNumber.of(novo.w));
+      d.set(N.of('Height'),           PDFLib.PDFNumber.of(novo.h));
+      d.set(N.of('ColorSpace'),       N.of('DeviceRGB'));
+      d.set(N.of('BitsPerComponent'), PDFLib.PDFNumber.of(8));
+      d.set(N.of('Length'),           PDFLib.PDFNumber.of(novo.bytes.length));
+      d.delete(N.of('DecodeParms'));
+      d.delete(N.of('Decode'));
+      doc.context.assign(it.ref, PDFLib.PDFRawStream.of(d, novo.bytes));
+      trocadas++;
+    }catch(e){
+      console.warn('imagem ignorada', e);   // deixa a original no lugar
+    }finally{
+      if(bmp && bmp.close) bmp.close();
+    }
+  }
+  if(!trocadas) return null;
+  return salvarPdfLib(doc);
+}
+
+// ── Quanto cada imagem ocupa de fato na página ────────────────
+// Lê o content stream de cada página e acompanha a matriz de
+// transformação (q / Q / cm) até o "Do" que desenha a imagem.
+// A imagem sempre é desenhada num quadrado 1×1 transformado pela
+// matriz — então a matriz dá, em pontos, o tamanho na página.
+// Se qualquer coisa der errado, a imagem só fica de fora do mapa
+// e o recompressor usa o teto absoluto.
+function pdfMedirUso(doc){
+  const N = PDFLib.PDFName, uso = {};
+  let paginas = [];
+  try{ paginas = doc.getPages(); }catch(e){ return uso; }
+
+  paginas.forEach(function(pg){
+    try{
+      const res = pg.node.Resources();
+      const xo  = res && res.lookup(N.of('XObject'));
+      if(!xo || !xo.entries) return;
+
+      const nomeRef = {};
+      xo.entries().forEach(function(par){
+        const r = xo.get(par[0]);
+        if(r) nomeRef[String(par[0])] = r.toString();
+      });
+      if(!Object.keys(nomeRef).length) return;
+
+      const txt = conteudoDaPagina(doc, pg);
+      if(!txt) return;
+
+      marcarUso(txt, nomeRef, uso);
+    }catch(e){ /* página ilegível — segue sem ela */ }
+  });
+  return uso;
+}
+
+function conteudoDaPagina(doc, pg){
+  const N = PDFLib.PDFName;
+  let c = pg.node.get(N.of('Contents'));
+  if(c && c.tag !== undefined) c = doc.context.lookup(c);   // era uma referência
+  const partes = [];
+  const puxa = function(st){
+    try{
+      st = (st && st.tag !== undefined) ? doc.context.lookup(st) : st;
+      if(!st || !st.contents) return;
+      const cru = (String(st.dict.get(N.of('Filter'))||'') && PDFLib.decodePDFRawStream)
+        ? PDFLib.decodePDFRawStream(st).decode()
+        : st.contents;
+      partes.push(latin1(cru));
+    }catch(e){}
+  };
+  if(c && c.asArray)      c.asArray().forEach(puxa);
+  else if(Array.isArray(c)) c.forEach(puxa);
+  else                      puxa(c);
+  return partes.join('\n');
+}
+
+function latin1(u8){
+  let s = '';
+  for(let i=0; i<u8.length; i+=8192){
+    s += String.fromCharCode.apply(null, u8.subarray(i, i+8192));
+  }
+  return s;
+}
+
+function marcarUso(txt, nomeRef, uso){
+  // Imagens inline (BI … ID <binário> EI) confundiriam o leitor.
+  txt = txt.replace(/\bBI\b[\s\S]*?\bEI\b/g, ' ');
+
+  const SEP = /[\s()<>\[\]{}\/%]/;
+  let i = 0, n = txt.length;
+  let ctm = [1,0,0,1,0,0], pilha = [], args = [];
+
+  while(i < n){
+    const c = txt[i];
+
+    if(c === '%'){ while(i<n && txt[i] !== '\n') i++; continue; }
+    if(c===' '||c==='\n'||c==='\r'||c==='\t'||c==='\f'||c==='\0'){ i++; continue; }
+
+    if(c === '('){                       // string literal — pula inteira
+      let d = 1; i++;
+      while(i<n && d>0){
+        if(txt[i]==='\\') i++;
+        else if(txt[i]==='(') d++;
+        else if(txt[i]===')') d--;
+        i++;
+      }
+      args.push(null); continue;
+    }
+    if(c === '<'){                       // dicionário ou string hexa
+      if(txt[i+1] === '<'){ i+=2; args.push(null); continue; }
+      while(i<n && txt[i] !== '>') i++; i++;
+      args.push(null); continue;
+    }
+    if(c === '>' && txt[i+1] === '>'){ i+=2; args.push(null); continue; }
+    if(c === '[' || c === ']'){ i++; continue; }
+    if(c === '/'){                       // nome, ex.: /Im3
+      let j = i+1;
+      while(j<n && !SEP.test(txt[j])) j++;
+      args.push(txt.slice(i, j)); i = j; continue;
+    }
+
+    let j = i;
+    while(j<n && !SEP.test(txt[j])) j++;
+    if(j === i){ i++; continue; }
+    const w = txt.slice(i, j); i = j;
+
+    if(/^[-+.\d]/.test(w)){
+      const v = parseFloat(w);
+      args.push(isNaN(v) ? null : v);
+      continue;
+    }
+
+    // é um operador
+    if(w === 'q'){ pilha.push(ctm.slice()); }
+    else if(w === 'Q'){ ctm = pilha.pop() || [1,0,0,1,0,0]; }
+    else if(w === 'cm' && args.length >= 6){
+      const m = args.slice(-6);
+      if(m.every(x => typeof x === 'number')) ctm = multMat(m, ctm);
+    }
+    else if(w === 'Do' && args.length){
+      const nome = args[args.length-1];
+      const ref  = (typeof nome === 'string') ? nomeRef[nome] : null;
+      if(ref){
+        // O quadrado unitário da imagem transformado pela matriz.
+        const lw = Math.hypot(ctm[0], ctm[1]);
+        const lh = Math.hypot(ctm[2], ctm[3]);
+        const at = uso[ref];
+        if(!at || lw > at.w || lh > at.h){
+          uso[ref] = {w: Math.max(lw, at ? at.w : 0), h: Math.max(lh, at ? at.h : 0)};
+        }
+      }
+    }
+    args = [];
+  }
+}
+
+function multMat(m, c){
+  return [
+    m[0]*c[0] + m[1]*c[2],
+    m[0]*c[1] + m[1]*c[3],
+    m[2]*c[0] + m[3]*c[2],
+    m[2]*c[1] + m[3]*c[3],
+    m[4]*c[0] + m[5]*c[2] + c[4],
+    m[4]*c[1] + m[5]*c[3] + c[5]
+  ];
+}
+
+// Varre o PDF atrás dos objetos que são imagem de verdade.
+function pdfImagens(doc){
+  const N = PDFLib.PDFName, out = [];
+  doc.context.enumerateIndirectObjects().forEach(function(par){
+    const ref = par[0], obj = par[1];
+    if(!(obj instanceof PDFLib.PDFRawStream)) return;
+    const d = obj.dict;
+    const sub = d.get(N.of('Subtype'));
+    if(!sub || String(sub) !== '/Image') return;
+    if(d.get(N.of('ImageMask'))) return;                     // stencil 1 bit
+    const w = Number(d.get(N.of('Width'))),
+          h = Number(d.get(N.of('Height')));
+    if(!w || !h) return;
+    if(w*h < 40000) return;                                  // menor que 200×200 não compensa
+    if(obj.contents.length < 24576) return;                  // menos de 24 KB idem
+    out.push({ref:ref, dict:d, bytes:obj.contents, w:w, h:h,
+              filtro:String(d.get(N.of('Filter'))||''),
+              cor:String(d.get(N.of('ColorSpace'))||'')});
+  });
+  return out;
+}
+
+// Só mexe no que dá pra decodificar com segurança. Qualquer coisa
+// exótica (CMYK, JPEG2000, paleta indexada, filtro encadeado) fica
+// como está — antes um PDF maior que um PDF com cor errada.
+async function pdfDecodificar(it){
+  if(/CMYK|Separation|DeviceN|Indexed|Lab/i.test(it.cor)) return null;
+
+  if(it.filtro === '/DCTDecode'){
+    // O stream já é um JPEG completo — o navegador decodifica direto.
+    return await createImageBitmap(new Blob([it.bytes], {type:'image/jpeg'}));
+  }
+
+  if(it.filtro === '/FlateDecode'){
+    if(typeof PDFLib.decodePDFRawStream !== 'function') return null;
+    const cru = PDFLib.decodePDFRawStream({dict:it.dict, contents:it.bytes}).decode();
+    const px  = it.w * it.h;
+    let dados;
+    if(cru.length >= px*3 && /RGB/i.test(it.cor)){
+      dados = new Uint8ClampedArray(px*4);
+      for(let k=0, j=0; k<px; k++, j+=4){
+        dados[j]=cru[k*3]; dados[j+1]=cru[k*3+1]; dados[j+2]=cru[k*3+2]; dados[j+3]=255;
+      }
+    }else if(cru.length >= px && /Gray/i.test(it.cor)){
+      dados = new Uint8ClampedArray(px*4);
+      for(let k=0, j=0; k<px; k++, j+=4){
+        dados[j]=dados[j+1]=dados[j+2]=cru[k]; dados[j+3]=255;
+      }
+    }else return null;
+    return await createImageBitmap(new ImageData(dados, it.w, it.h));
+  }
+
+  return null;   // JPX, CCITT, filtro encadeado…
+}
+
+// Reduz só se a imagem estiver com mais pixel do que a página usa.
+// Nunca aumenta.
+async function recodificar(bmp, px, q){
+  const f = Math.min(1, px / Math.max(bmp.width, bmp.height));
+  const w = Math.max(1, Math.round(bmp.width  * f));
+  const h = Math.max(1, Math.round(bmp.height * f));
+  const cv = document.createElement('canvas');
+  cv.width = w; cv.height = h;
+  const cx = cv.getContext('2d');
+  cx.fillStyle = '#fff'; cx.fillRect(0,0,w,h);
+  cx.imageSmoothingQuality = 'high';
+  cx.drawImage(bmp, 0, 0, w, h);
+  const blob = await new Promise(r => cv.toBlob(r, 'image/jpeg', q));
+  cv.width = cv.height = 0;
+  return {bytes:new Uint8Array(await blob.arrayBuffer()), w:w, h:h};
+}
+
+async function rasterizar(doc, dpi, q){
+  const { jsPDF } = window.jspdf;
+  let out = null;
+  for(let n=1; n<=doc.numPages; n++){
+    const pg  = await doc.getPage(n);
+    const vp1 = pg.getViewport({scale: 1});          // pontos (tamanho real da página)
+    const vp  = pg.getViewport({scale: dpi/72});     // pixels no DPI escolhido
+    const cv  = document.createElement('canvas');
+    cv.width  = Math.max(1, Math.round(vp.width));
+    cv.height = Math.max(1, Math.round(vp.height));
+    const cx  = cv.getContext('2d');
+    cx.fillStyle = '#fff'; cx.fillRect(0,0,cv.width,cv.height);
+    await pg.render({canvasContext: cx, viewport: vp}).promise;
+    const img = cv.toDataURL('image/jpeg', q);
+    const ori = vp1.width > vp1.height ? 'l' : 'p';
+    if(!out) out = new jsPDF({unit:'pt', format:[vp1.width, vp1.height], orientation:ori});
+    else     out.addPage([vp1.width, vp1.height], ori);
+    out.addImage(img, 'JPEG', 0, 0, vp1.width, vp1.height);
+    cv.width = cv.height = 0;      // libera memória (catálogo tem muita página)
+  }
+  return out.output('blob');
+}
+
+async function capaPDF(doc){
+  try{
+    const pg = await doc.getPage(1);
+    const v1 = pg.getViewport({scale:1});
+    const vp = pg.getViewport({scale: 300 / v1.width});
+    const cv = document.createElement('canvas');
+    cv.width = Math.round(vp.width); cv.height = Math.round(vp.height);
+    const cx = cv.getContext('2d');
+    cx.fillStyle = '#fff'; cx.fillRect(0,0,cv.width,cv.height);
+    await pg.render({canvasContext: cx, viewport: vp}).promise;
+    return cv.toDataURL('image/jpeg', .7);
+  }catch(e){ return null; }
+}
+
+// Foto: redimensiona e recomprime até caber no teto, com qualidade
+// suficiente pra mandar no WhatsApp e pra ver na tela.
+async function prepararFoto(file){
+  const img = await carregarImg(file);
+  const lados = [2200, 1800, 1500, 1200];
+  const qs    = [.86, .78, .7, .6, .5];
+  let ultimo  = null;
+
+  for(let a=0; a<lados.length; a++){
+    for(let b=0; b<qs.length; b++){
+      const blob = await desenhar(img, lados[a], qs[b]);
+      if(blob.size <= LIM_FOTO){
+        return {blob: blob, ext:'jpg', thumb: await desenharData(img, 300, .7)};
+      }
+      ultimo = blob;
+    }
+  }
+  return {blob: ultimo || file, ext:'jpg', thumb: await desenharData(img, 300, .7)};
+}
+
+function carregarImg(file){
+  return new Promise(function(res, rej){
+    const i = new Image();
+    i.onload  = () => res(i);
+    i.onerror = () => rej(new Error('Imagem inválida'));
+    i.src = URL.createObjectURL(file);
+  });
+}
+
+function medidas(img, maxLado){
+  const w = img.naturalWidth, h = img.naturalHeight;
+  const f = Math.min(1, maxLado / Math.max(w, h));
+  return [Math.max(1, Math.round(w*f)), Math.max(1, Math.round(h*f))];
+}
+
+function pintar(img, maxLado){
+  const [w,h] = medidas(img, maxLado);
+  const cv = document.createElement('canvas');
+  cv.width = w; cv.height = h;
+  const cx = cv.getContext('2d');
+  cx.fillStyle = '#fff'; cx.fillRect(0,0,w,h);   // PNG com transparência vira fundo branco
+  cx.imageSmoothingQuality = 'high';
+  cx.drawImage(img, 0, 0, w, h);
+  return cv;
+}
+
+function desenhar(img, maxLado, q){
+  return new Promise(function(res){
+    pintar(img, maxLado).toBlob(b => res(b), 'image/jpeg', q);
+  });
+}
+function desenharData(img, maxLado, q){
+  return Promise.resolve(pintar(img, maxLado).toDataURL('image/jpeg', q));
+}
+
+/* ══════════ Editar / excluir (só editores) ══════════ */
+let _renId = null;
+
+function abrirRenomear(id){
+  if(!EDITOR) return;
+  const i = acha(id); if(!i) return;
+  _renId = id;
+  document.getElementById('ren-nome').value = i.nome || '';
+  document.getElementById('ren-col').value  = i.colecao || '';
+  abrirModal('mov-ren');
+}
+
+async function salvarRenomear(){
+  if(!EDITOR || !_renId) return;
+  const nome = (document.getElementById('ren-nome').value||'').trim();
+  const col  = (document.getElementById('ren-col').value||'').trim();
+  if(!nome){ toast('O nome não pode ficar vazio.', 'err'); return; }
+  try{
+    await DB.collection(COL).doc(_renId).update({nome:nome, colecao:col});
+    fecharModal('mov-ren');
+    toast('Atualizado pra todo mundo.', 'ok');
+  }catch(e){
+    console.warn('renomear', e);
+    toast('Não consegui salvar: '+msgErro(e), 'err');
+  }
+}
+
+async function excluir(id){
+  if(!EDITOR) return;
+  const i = acha(id); if(!i) return;
+  if(!confirm('Excluir "'+i.nome+'"?\n\nSome pra todas as vendedoras na hora e não dá pra desfazer.')) return;
+  try{
+    await DB.collection(COL).doc(id).delete();
+    try{ await ST.ref(i.arquivo).delete(); }
+    catch(e){ console.warn('storage delete', e); }   // índice já saiu; arquivo órfão não quebra nada
+    toast('Excluído.', 'ok');
+  }catch(e){
+    console.warn('excluir', e);
+    toast('Não consegui excluir: '+msgErro(e), 'err');
+  }
+}
+
+/* ══════════ Utilidades ══════════ */
+function abrirModal(id){ document.getElementById(id).classList.add('open'); }
+function fecharModal(id){ document.getElementById(id).classList.remove('open'); }
+document.addEventListener('keydown', e=>{
+  if(e.key === 'Escape') document.querySelectorAll('.mov.open').forEach(m=>m.classList.remove('open'));
+});
+
+function tam(b){
+  if(!b && b !== 0) return '';
+  if(b < 1024) return b+' B';
+  if(b < 1048576) return (b/1024).toFixed(0)+' KB';
+  return (b/1048576).toFixed(1).replace('.',',')+' MB';
+}
+function esc(s){
+  return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+let _tt = null;
+function toast(msg, tipo){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + (tipo||'');
+  clearTimeout(_tt);
+  _tt = setTimeout(()=>{ t.className = tipo||''; }, 3600);
+}
+</script>
+</body>
+</html>

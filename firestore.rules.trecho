@@ -1,0 +1,29 @@
+// ══════════════════════════════════════════════════════════════
+//  Loretto Scarpa · Catálogos — trecho pro Firestore
+//
+//  ⚠️ ATENÇÃO: NÃO substitua o arquivo de regras inteiro!
+//  O projeto loretto-scarpa-l-icr já tem regras das outras
+//  coleções (ls_metas, ls_historico, ls_melhorias…). Se você
+//  colar por cima de tudo, os outros painéis param de funcionar.
+//
+//  O que fazer: console.firebase.google.com → Firestore Database
+//  → aba Rules. Cole APENAS os blocos abaixo DENTRO do
+//  match /databases/{database}/documents { ... } que já existe,
+//  junto dos outros match. Depois clique em Publicar.
+// ══════════════════════════════════════════════════════════════
+
+    function editorCatalogo() {
+      return request.auth != null
+        && request.auth.token.email.lower() in [
+             'lorettoscarpa@gmail.com',
+             'lorraynelorettoscarpa@gmail.com'
+           ];
+    }
+
+    match /ls_catalogos/{item} {
+      // Toda vendedora logada na Central lê a lista.
+      allow read: if request.auth != null;
+
+      // Só a gestão e a Lorrayne criam, renomeiam e excluem.
+      allow create, update, delete: if editorCatalogo();
+    }
