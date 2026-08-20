@@ -324,7 +324,7 @@ body.selmodo #toast{bottom:100px;}
 /* ══════════════════════════════════════════════════════════
    CATÁLOGOS · Loretto Scarpa
    Mesmo projeto Firebase da Central (login único).
-   Arquivos: Firebase Storage · Índice: Firestore (ls_catalogos)
+   Arquivos: Firebase Storage · Índice: Firestore (catalogos_arquivos)
    ══════════════════════════════════════════════════════════ */
 
 const firebaseConfig = {
@@ -355,7 +355,11 @@ const NOMES = {
 const CENTRAL   = 'https://lorettoscarpa-icr.github.io/central/';
 const LIM_PDF   = 10 * 1024 * 1024;   // 10 MB — teto pedido pra catálogo
 const LIM_FOTO  =  2 * 1024 * 1024;   // 2 MB  — foto de coleção, sobra qualidade
-const COL       = 'ls_catalogos';
+// Precisa bater com o nome usado no firestore.rules. Se mudar aqui, mude
+// lá também — e lembre da lista de excecoes da regra coringa do final do
+// arquivo de regras, senao a colecao volta a aceitar escrita de qualquer
+// pessoa logada.
+const COL       = 'catalogos_arquivos';
 
 let DB=null, AUTH=null, ST=null;
 let SESSION=null, EDITOR=false, ITENS=[], TAB='pdf', _authOk=false;
