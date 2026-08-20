@@ -3,8 +3,22 @@
     "origin": [
       "https://lorettoscarpa-icr.github.io"
     ],
-    "method": ["GET", "HEAD"],
-    "responseHeader": ["Content-Type", "Content-Disposition", "Content-Length"],
+    "method": ["GET", "HEAD", "PUT", "POST", "DELETE", "PATCH"],
+    "responseHeader": [
+      "Content-Type",
+      "Content-Length",
+      "Content-Range",
+      "Content-Disposition",
+      "Content-Encoding",
+      "Range",
+      "ETag",
+      "X-Goog-Upload-URL",
+      "X-Goog-Upload-Status",
+      "X-Goog-Upload-Size-Received",
+      "X-Goog-Upload-Chunk-Granularity",
+      "X-Goog-Upload-Control-URL",
+      "X-Firebase-Storage-Version"
+    ],
     "maxAgeSeconds": 3600
   }
 ]
