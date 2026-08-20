@@ -25,14 +25,6 @@ body{font-family:'Barlow',sans-serif;background:
     radial-gradient(ellipse 80% 40% at 50% 0%, rgba(74,99,48,.4) 0%, transparent 50%),
     var(--v0);background-attachment:fixed;color:var(--cr);min-height:100vh;font-variant-numeric:lining-nums;font-feature-settings:"lnum" 1;}
 
-.head{background:rgba(0,0,0,.4);border-bottom:1px solid var(--oud2);padding:18px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px;}
-.h-bloc{display:flex;flex-direction:column;}
-.h-marca{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;letter-spacing:5px;color:var(--ou);text-transform:uppercase;line-height:1;}
-.h-sub{font-size:10px;letter-spacing:3px;color:var(--cr3);text-transform:uppercase;margin-top:6px;}
-.h-user{font-size:11px;letter-spacing:1.5px;color:var(--cr3);text-transform:uppercase;text-align:right;line-height:1.7;}
-.h-user b{color:var(--ou2);}
-.h-selo{display:inline-block;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1.2px;padding:2px 7px;border:1px solid var(--oud);color:var(--ou2);border-radius:2px;margin-top:3px;}
-.h-selo.leitura{border-color:rgba(248,243,230,.22);color:var(--cr3);}
 
 .tabnav{display:flex;gap:2px;border-bottom:1px solid var(--oud2);padding:0 24px;background:rgba(0,0,0,.2);overflow-x:auto;}
 .tabnav-btn{background:transparent;border:none;padding:14px 22px;font-size:11px;letter-spacing:2px;color:var(--cr3);cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;text-transform:uppercase;white-space:nowrap;}
@@ -205,7 +197,6 @@ body.selmodo #toast{bottom:100px;}
 
 @media(max-width:640px){
   main{padding:16px;}
-  .head{padding:14px 16px;}
   .tabnav{padding:0 10px;}
   .tabnav-btn{padding:13px 14px;}
   .grade{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
@@ -218,17 +209,6 @@ body.selmodo #toast{bottom:100px;}
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 </head>
 <body>
-
-<div class="head">
-  <div class="h-bloc">
-    <div class="h-marca">Loretto Scarpa</div>
-    <div class="h-sub">Catálogos &amp; Coleções</div>
-  </div>
-  <div class="h-user">
-    <b id="hu-nome">…</b><br>
-    <span class="h-selo leitura" id="hu-selo">Carregando</span>
-  </div>
-</div>
 
 <div class="tabnav" id="tabnav" hidden>
   <button class="tabnav-btn active" onclick="abrirTab('pdf',this)">Catálogos <span class="cnt" id="cnt-pdf"></span></button>
@@ -414,12 +394,6 @@ if(AUTH){
     SESSION = user;
     const email = (user.email||'').toLowerCase();
     EDITOR = EDITORES.indexOf(email) >= 0;
-
-    const nome = NOMES[email] || (user.displayName||'').split(' ')[0] || email.split('@')[0];
-    document.getElementById('hu-nome').textContent = String(nome).toUpperCase();
-    const selo = document.getElementById('hu-selo');
-    selo.textContent = EDITOR ? 'Pode editar' : 'Ver e baixar';
-    selo.className = 'h-selo' + (EDITOR ? '' : ' leitura');
 
     document.getElementById('gate').hidden = true;
     document.getElementById('app').hidden  = false;
