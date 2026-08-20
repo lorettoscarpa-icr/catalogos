@@ -164,6 +164,9 @@ body.selmodo #toast{bottom:100px;}
 .dropzone .dz-ico{font-size:30px;opacity:.5;}
 .dropzone .dz-t{font-size:13.5px;color:var(--cr2);margin-top:8px;}
 .dropzone .dz-s{font-size:11px;color:var(--cr3);margin-top:4px;}
+.dz-pasta{margin-top:12px;background:transparent;border:1px solid var(--oud2);color:var(--cr2);padding:7px 13px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.1px;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:.15s;}
+.dz-pasta:hover{border-color:var(--ou);color:var(--ou2);background:rgba(212,180,90,.1);}
+.fi-col{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.8px;text-transform:uppercase;color:var(--ou2);margin-top:4px;}
 
 .fila{margin-top:14px;display:flex;flex-direction:column;gap:7px;max-height:230px;overflow-y:auto;}
 .fila-item{background:var(--bgd);border:1px solid var(--oud2);border-radius:2px;padding:9px 11px;}
@@ -259,15 +262,17 @@ body.selmodo #toast{bottom:100px;}
       <label>Coleção</label>
       <input type="text" id="up-col" list="dl-col" placeholder="Ex.: Verão 2026" autocomplete="off">
       <datalist id="dl-col"></datalist>
-      <div class="dica">Agrupa os arquivos no painel. Se deixar em branco, entra em “Sem coleção”.</div>
+      <div class="dica" id="up-dica">Agrupa os arquivos no painel. Se deixar em branco, entra em “Sem coleção”.</div>
     </div>
 
     <div class="dropzone" id="dz" onclick="document.getElementById('up-file').click()">
       <div class="dz-ico">⇪</div>
-      <div class="dz-t" id="dz-t">Clique aqui ou arraste os arquivos</div>
+      <div class="dz-t" id="dz-t">Clique aqui ou arraste os arquivos — ou uma pasta inteira</div>
       <div class="dz-s" id="dz-s"></div>
+      <button class="dz-pasta" id="bt-pasta" onclick="event.stopPropagation();document.getElementById('up-dir').click();">▤ Escolher uma pasta inteira</button>
     </div>
-    <input type="file" id="up-file" multiple hidden onchange="filaAdd(this.files);this.value='';">
+    <input type="file" id="up-file" multiple hidden onchange="filaAddArquivos(this.files);this.value='';">
+    <input type="file" id="up-dir" webkitdirectory directory multiple hidden onchange="filaAddArquivos(this.files);this.value='';">
 
     <div class="fila" id="fila"></div>
 
@@ -768,6 +773,9 @@ function abrirUpload(){
     ? 'Arquivos <b>PDF</b>. Acima de <b>'+tam(LIM_PDF)+'</b> o painel comprime sozinho antes de enviar.'
     : 'Imagens <b>PNG, JPG ou WEBP</b>. São redimensionadas e comprimidas pra ficar leves de mandar no WhatsApp.';
   document.getElementById('up-file').accept = pdf ? 'application/pdf,.pdf' : 'image/*';
+  document.getElementById('up-dir').accept  = pdf ? 'application/pdf,.pdf' : 'image/*';
+  // iPhone e iPad não sabem escolher pasta; lá o botão só frustraria.
+  document.getElementById('bt-pasta').hidden = !('webkitdirectory' in document.createElement('input'));
   document.getElementById('dz-s').textContent = pdf ? 'Só PDF' : 'PNG, JPG ou WEBP';
   document.getElementById('up-col').value = document.getElementById('filtro-col').value || '';
   document.getElementById('fila').innerHTML = '';
@@ -780,19 +788,83 @@ function abrirUpload(){
   const dz = document.getElementById('dz');
   ['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev, e=>{ e.preventDefault(); dz.classList.add('hover'); }));
   ['dragleave','drop'].forEach(ev=>dz.addEventListener(ev, e=>{ e.preventDefault(); dz.classList.remove('hover'); }));
-  dz.addEventListener('drop', e=>{ if(e.dataTransfer && e.dataTransfer.files) filaAdd(e.dataTransfer.files); });
+  dz.addEventListener('drop', function(e){
+    const dt = e.dataTransfer; if(!dt) return;
+    // As "entries" precisam ser lidas AGORA, ainda dentro do evento — depois
+    // de qualquer await o dataTransfer já foi esvaziado pelo navegador.
+    const raizes = [];
+    if(dt.items && dt.items.length && dt.items[0].webkitGetAsEntry){
+      for(let n=0; n<dt.items.length; n++){
+        const en = dt.items[n].webkitGetAsEntry();
+        if(en) raizes.push(en);
+      }
+    }
+    if(raizes.length){
+      const achados = [];
+      Promise.all(raizes.map(r=>percorrerPasta(r, '', achados))).then(()=>filaAdd(achados));
+    }else{
+      filaAddArquivos(dt.files);
+    }
+  });
 })();
 
-function filaAdd(files){
+// Desce a pasta inteira, subpastas incluídas, montando o caminho relativo
+// de cada arquivo — é o que vira o nome da coleção lá na frente.
+function percorrerPasta(entrada, prefixo, saida){
+  return new Promise(function(pronto){
+    if(entrada.isFile){
+      entrada.file(function(f){ saida.push({file:f, rel: prefixo + f.name}); pronto(); }, pronto);
+      return;
+    }
+    if(!entrada.isDirectory) return pronto();
+    const leitor = entrada.createReader(), filhos = [];
+    // readEntries devolve no máximo 100 por chamada: tem que insistir até
+    // vir vazio, senão pasta grande sobe pela metade sem avisar.
+    (function ler(){
+      leitor.readEntries(function(lote){
+        if(!lote.length){
+          Promise.all(filhos.map(c=>percorrerPasta(c, prefixo+entrada.name+'/', saida))).then(pronto);
+          return;
+        }
+        for(let n=0;n<lote.length;n++) filhos.push(lote[n]);
+        ler();
+      }, pronto);
+    })();
+  });
+}
+
+// Uma pasta vira uma coleção. "Verão 2026/Sociais/x.pdf" → "Verão 2026 / Sociais".
+function colecaoDoCaminho(rel){
+  const partes = String(rel||'').split('/').filter(Boolean);
+  partes.pop();                       // o último pedaço é o nome do arquivo
+  return partes.join(' / ');
+}
+
+// Entrada vinda de <input>: o caminho da pasta está em webkitRelativePath.
+function filaAddArquivos(files){
+  filaAdd(Array.prototype.map.call(files||[], function(f){
+    return {file:f, rel: f.webkitRelativePath || ''};
+  }));
+}
+
+function filaAdd(itens){
   const pdf = TAB === 'pdf';
-  let ignorados = 0;
-  Array.prototype.forEach.call(files, function(f){
+  let ignorados = 0, repetidos = 0;
+  itens.forEach(function(it){
+    const f = it.file; if(!f) return;
     const ehPdf = /pdf$/i.test(f.type) || /\.pdf$/i.test(f.name);
     const ehImg = /^image\//i.test(f.type);
     if(pdf ? !ehPdf : !ehImg){ ignorados++; return; }
-    FILA.push({file:f, nome:f.name.replace(/\.[^.]+$/,''), st:'fila', pct:0, det:''});
+    const col = colecaoDoCaminho(it.rel);
+    // Soltar a mesma pasta duas vezes não pode duplicar a fila.
+    const jaTem = FILA.some(function(x){
+      return x.file.name===f.name && x.file.size===f.size && x.col===col;
+    });
+    if(jaTem){ repetidos++; return; }
+    FILA.push({file:f, nome:f.name.replace(/\.[^.]+$/,''), col:col, st:'fila', pct:0, det:''});
   });
   if(ignorados) toast(ignorados+' arquivo(s) do tipo errado foram ignorados.', 'err');
+  else if(repetidos) toast(repetidos+' arquivo(s) já estavam na lista.', 'err');
   renderFila();
 }
 
@@ -807,18 +879,28 @@ function renderFila(){
       + '<span class="fi-st '+cls+'">'+esc(rot)+'</span>'
       + (f.st==='fila' ? '<button class="fi-rm" onclick="filaRm('+n+')" title="Tirar da lista">&times;</button>' : '')
       + '</div>'
+      + (f.col ? '<div class="fi-col">▤ '+esc(f.col)+'</div>' : '')
       + (f.st==='enviando'||f.st==='comprimindo' ? '<div class="fi-bar"><i style="width:'+(f.st==='comprimindo'?35:f.pct)+'%"></i></div>' : '')
       + '</div>';
   }).join('');
   const pend = FILA.filter(f=>f.st==='fila').length;
   document.getElementById('bt-enviar').disabled = !pend;
   document.getElementById('dz-t').textContent = FILA.length
-    ? 'Adicionar mais arquivos' : 'Clique aqui ou arraste os arquivos';
+    ? 'Adicionar mais arquivos ou outra pasta'
+    : 'Clique aqui ou arraste os arquivos — ou uma pasta inteira';
+
+  // Se veio de pasta, quem manda na coleção é o nome da pasta. Diz isso em
+  // voz alta, senão a pessoa digita no campo e não entende por que foi
+  // ignorado naqueles arquivos.
+  const dePasta = FILA.filter(f=>f.col).length;
+  document.getElementById('up-dica').textContent = dePasta
+    ? dePasta+' arquivo(s) vieram de pasta e usam o nome dela como coleção. Este campo vale só para os demais.'
+    : 'Agrupa os arquivos no painel. Se deixar em branco, entra em “Sem coleção”.';
 }
 
 async function enviarFila(){
   if(!EDITOR) return;
-  const colecao = (document.getElementById('up-col').value||'').trim();
+  const colecaoCampo = (document.getElementById('up-col').value||'').trim();
   const tipo    = TAB;
   const bt      = document.getElementById('bt-enviar');
   bt.disabled = true; bt.textContent = 'Enviando…';
@@ -835,6 +917,7 @@ async function enviarFila(){
       f.det = '';
 
       f.st = 'enviando'; f.pct = 0; renderFila();
+      const colecao = f.col || colecaoCampo;   // pasta manda; campo é o padrão
       const id   = DB.collection(COL).doc().id;
       const ext  = prep.ext;
       const path = (tipo==='pdf'?'catalogos/':'fotos/') + id + '.' + ext;
