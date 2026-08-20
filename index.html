@@ -159,13 +159,14 @@ body.selmodo #toast{bottom:100px;}
 .campo input[type=text]:focus{outline:none;border-color:var(--oud);}
 .campo .dica{font-size:11px;color:var(--cr3);margin-top:5px;line-height:1.45;}
 
-.dropzone{border:1px dashed var(--oud);background:rgba(212,180,90,.04);border-radius:3px;padding:28px 18px;text-align:center;cursor:pointer;transition:.15s;}
+.dropzone{border:1px dashed var(--oud);background:rgba(212,180,90,.04);border-radius:3px;padding:22px 14px;text-align:center;cursor:pointer;transition:.15s;}
 .dropzone:hover,.dropzone.hover{background:rgba(212,180,90,.11);border-color:var(--ou);}
 .dropzone .dz-ico{font-size:30px;opacity:.5;}
 .dropzone .dz-t{font-size:13.5px;color:var(--cr2);margin-top:8px;}
 .dropzone .dz-s{font-size:11px;color:var(--cr3);margin-top:4px;}
-.dz-pasta{margin-top:12px;background:transparent;border:1px solid var(--oud2);color:var(--cr2);padding:7px 13px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.1px;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:.15s;}
-.dz-pasta:hover{border-color:var(--ou);color:var(--ou2);background:rgba(212,180,90,.1);}
+/* auto-fit: se um dos dois sumir (iPhone nao escolhe pasta), o que ficar
+   ocupa a largura toda em vez de deixar buraco. */
+.dz-dupla{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;}
 .fi-col{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.8px;text-transform:uppercase;color:var(--ou2);margin-top:4px;}
 
 .fila{margin-top:14px;display:flex;flex-direction:column;gap:7px;max-height:230px;overflow-y:auto;}
@@ -265,11 +266,17 @@ body.selmodo #toast{bottom:100px;}
       <div class="dica" id="up-dica">Agrupa os arquivos no painel. Se deixar em branco, entra em “Sem coleção”.</div>
     </div>
 
-    <div class="dropzone" id="dz" onclick="document.getElementById('up-file').click()">
-      <div class="dz-ico">⇪</div>
-      <div class="dz-t" id="dz-t">Clique aqui ou arraste os arquivos — ou uma pasta inteira</div>
-      <div class="dz-s" id="dz-s"></div>
-      <button class="dz-pasta" id="bt-pasta" onclick="event.stopPropagation();document.getElementById('up-dir').click();">▤ Escolher uma pasta inteira</button>
+    <div class="dz-dupla">
+      <div class="dropzone" id="dz" onclick="document.getElementById('up-file').click()">
+        <div class="dz-ico">⇪</div>
+        <div class="dz-t" id="dz-t">Escolher arquivos</div>
+        <div class="dz-s" id="dz-s"></div>
+      </div>
+      <div class="dropzone" id="dz-pasta" onclick="document.getElementById('up-dir').click()">
+        <div class="dz-ico">▤</div>
+        <div class="dz-t">Escolher uma pasta</div>
+        <div class="dz-s">A pasta vira a coleção</div>
+      </div>
     </div>
     <input type="file" id="up-file" multiple hidden onchange="filaAddArquivos(this.files);this.value='';">
     <input type="file" id="up-dir" webkitdirectory directory multiple hidden onchange="filaAddArquivos(this.files);this.value='';">
@@ -775,21 +782,26 @@ function abrirUpload(){
   document.getElementById('up-tit').textContent = pdf ? 'Subir catálogos' : 'Subir fotos da coleção';
   document.getElementById('up-sub').innerHTML = pdf
     ? 'Arquivos <b>PDF</b>. Acima de <b>'+tam(LIM_PDF)+'</b> o painel comprime sozinho antes de enviar.'
-    : 'Imagens <b>PNG, JPG ou WEBP</b>. São redimensionadas e comprimidas pra ficar leves de mandar no WhatsApp.';
+    : 'Imagens <b>JPG, PNG, WEBP, GIF ou BMP</b>. São redimensionadas e comprimidas pra ficar leves de mandar no WhatsApp. <b>HEIC do iPhone não serve</b> — salve como JPG antes.';
   document.getElementById('up-file').accept = pdf ? 'application/pdf,.pdf' : 'image/*';
   document.getElementById('up-dir').accept  = pdf ? 'application/pdf,.pdf' : 'image/*';
   // iPhone e iPad não sabem escolher pasta; lá o botão só frustraria.
-  document.getElementById('bt-pasta').hidden = !('webkitdirectory' in document.createElement('input'));
-  document.getElementById('dz-s').textContent = pdf ? 'Só PDF' : 'PNG, JPG ou WEBP';
+  document.getElementById('dz-pasta').hidden = !('webkitdirectory' in document.createElement('input'));
+  document.getElementById('dz-s').textContent = pdf ? 'Só PDF' : 'JPG, PNG, WEBP, GIF ou BMP';
   document.getElementById('up-col').value = document.getElementById('filtro-col').value || '';
-  document.getElementById('fila').innerHTML = '';
-  document.getElementById('bt-enviar').disabled = true;
   document.getElementById('bt-enviar').textContent = 'Enviar';
+  // Repinta em vez de limpar na mão: renderFila também devolve o rótulo do
+  // card e a dica da coleção ao estado inicial. Limpando só o HTML da fila,
+  // o modal reabria dizendo "3 arquivos vieram de pasta" com a fila vazia.
+  renderFila();
   abrirModal('mov-up');
 }
 
 (function(){
-  const dz = document.getElementById('dz');
+  // Soltar funciona nos dois cards: quem decide se veio arquivo ou pasta
+  // e' o proprio conteudo do arrasto, nao o card em que a pessoa soltou.
+  ['dz','dz-pasta'].forEach(function(qual){
+  const dz = document.getElementById(qual);
   ['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev, e=>{ e.preventDefault(); dz.classList.add('hover'); }));
   ['dragleave','drop'].forEach(ev=>dz.addEventListener(ev, e=>{ e.preventDefault(); dz.classList.remove('hover'); }));
   dz.addEventListener('drop', function(e){
@@ -809,6 +821,7 @@ function abrirUpload(){
     }else{
       filaAddArquivos(dt.files);
     }
+  });
   });
 })();
 
@@ -851,14 +864,21 @@ function filaAddArquivos(files){
   }));
 }
 
+// Formatos que o navegador aceita como "imagem" mas nao consegue abrir.
+// HEIC e' o padrao de foto do iPhone: se a pessoa arrasta o arquivo do
+// celular pro computador, chega assim. Melhor recusar na hora, dizendo o
+// porque, do que deixar quebrar no meio do envio com "Imagem invalida".
+const FOTO_NAO_ABRE = /(^image\/(heic|heif|tiff)$)|(\.(heic|heif|tiff?)$)/i;
+
 function filaAdd(itens){
   const pdf = TAB === 'pdf';
-  let ignorados = 0, repetidos = 0;
+  let ignorados = 0, repetidos = 0, naoAbre = 0;
   itens.forEach(function(it){
     const f = it.file; if(!f) return;
     const ehPdf = /pdf$/i.test(f.type) || /\.pdf$/i.test(f.name);
     const ehImg = /^image\//i.test(f.type);
     if(pdf ? !ehPdf : !ehImg){ ignorados++; return; }
+    if(!pdf && FOTO_NAO_ABRE.test(f.type + ' ' + f.name)){ naoAbre++; return; }
     const col = colecaoDoCaminho(it.rel);
     // Soltar a mesma pasta duas vezes não pode duplicar a fila.
     const jaTem = FILA.some(function(x){
@@ -867,7 +887,8 @@ function filaAdd(itens){
     if(jaTem){ repetidos++; return; }
     FILA.push({file:f, nome:f.name.replace(/\.[^.]+$/,''), col:col, st:'fila', pct:0, det:''});
   });
-  if(ignorados) toast(ignorados+' arquivo(s) do tipo errado foram ignorados.', 'err');
+  if(naoAbre)        toast(naoAbre+' foto(s) em HEIC/TIFF. O navegador não abre esse formato — salve como JPG e mande de novo.', 'err');
+  else if(ignorados) toast(ignorados+' arquivo(s) do tipo errado foram ignorados.', 'err');
   else if(repetidos) toast(repetidos+' arquivo(s) já estavam na lista.', 'err');
   renderFila();
 }
@@ -890,8 +911,7 @@ function renderFila(){
   const pend = FILA.filter(f=>f.st==='fila').length;
   document.getElementById('bt-enviar').disabled = !pend;
   document.getElementById('dz-t').textContent = FILA.length
-    ? 'Adicionar mais arquivos ou outra pasta'
-    : 'Clique aqui ou arraste os arquivos — ou uma pasta inteira';
+    ? 'Adicionar mais arquivos' : 'Escolher arquivos';
 
   // Se veio de pasta, quem manda na coleção é o nome da pasta. Diz isso em
   // voz alta, senão a pessoa digita no campo e não entende por que foi
@@ -1421,7 +1441,9 @@ function carregarImg(file){
   return new Promise(function(res, rej){
     const i = new Image();
     i.onload  = () => res(i);
-    i.onerror = () => rej(new Error('Imagem inválida'));
+    // "Inválida" seria mentira: o arquivo pode estar perfeito e só ser um
+    // formato que este navegador não decodifica.
+    i.onerror = () => rej(new Error('Navegador não abriu esta imagem'));
     i.src = URL.createObjectURL(file);
   });
 }
