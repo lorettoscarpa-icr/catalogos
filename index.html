@@ -780,14 +780,16 @@ function abrirUpload(){
   FILA = [];
   const pdf = TAB === 'pdf';
   document.getElementById('up-tit').textContent = pdf ? 'Subir catálogos' : 'Subir fotos da coleção';
-  document.getElementById('up-sub').innerHTML = pdf
-    ? 'Arquivos <b>PDF</b>. Acima de <b>'+tam(LIM_PDF)+'</b> o painel comprime sozinho antes de enviar.'
-    : 'Imagens <b>JPG, PNG, WEBP, GIF ou BMP</b>. São redimensionadas e comprimidas pra ficar leves de mandar no WhatsApp. <b>HEIC do iPhone não serve</b> — salve como JPG antes.';
-  document.getElementById('up-file').accept = pdf ? 'application/pdf,.pdf' : 'image/*';
-  document.getElementById('up-dir').accept  = pdf ? 'application/pdf,.pdf' : 'image/*';
+  document.getElementById('up-sub').innerHTML =
+    'Pode misturar <b>PDF</b> e <b>foto</b> no mesmo envio — cada um vai pra sua aba sozinho. '
+    + 'PDF acima de <b>'+tam(LIM_PDF)+'</b> o painel comprime antes de enviar; foto é redimensionada '
+    + 'pra ficar leve no WhatsApp. Imagens: <b>JPG, PNG, WEBP, GIF ou BMP</b> '
+    + '(<b>HEIC do iPhone não serve</b> — salve como JPG antes).';
+  document.getElementById('up-file').accept = 'application/pdf,.pdf,image/*';
+  document.getElementById('up-dir').accept  = 'application/pdf,.pdf,image/*';
   // iPhone e iPad não sabem escolher pasta; lá o botão só frustraria.
   document.getElementById('dz-pasta').hidden = !('webkitdirectory' in document.createElement('input'));
-  document.getElementById('dz-s').textContent = pdf ? 'Só PDF' : 'JPG, PNG, WEBP, GIF ou BMP';
+  document.getElementById('dz-s').textContent = 'PDF, JPG, PNG, WEBP, GIF ou BMP';
   document.getElementById('up-col').value = document.getElementById('filtro-col').value || '';
   document.getElementById('bt-enviar').textContent = 'Enviar';
   // Repinta em vez de limpar na mão: renderFila também devolve o rótulo do
@@ -871,24 +873,27 @@ function filaAddArquivos(files){
 const FOTO_NAO_ABRE = /(^image\/(heic|heif|tiff)$)|(\.(heic|heif|tiff?)$)/i;
 
 function filaAdd(itens){
-  const pdf = TAB === 'pdf';
   let ignorados = 0, repetidos = 0, naoAbre = 0;
   itens.forEach(function(it){
     const f = it.file; if(!f) return;
     const ehPdf = /pdf$/i.test(f.type) || /\.pdf$/i.test(f.name);
     const ehImg = /^image\//i.test(f.type);
-    if(pdf ? !ehPdf : !ehImg){ ignorados++; return; }
-    if(!pdf && FOTO_NAO_ABRE.test(f.type + ' ' + f.name)){ naoAbre++; return; }
+    // Aceita os dois em qualquer aba: uma pasta do computador costuma ter
+    // catálogo e foto juntos, e obrigar a subir duas vezes só atrapalha.
+    // Cada arquivo carrega o próprio tipo e vai pra aba certa sozinho.
+    if(!ehPdf && !ehImg){ ignorados++; return; }
+    if(ehImg && FOTO_NAO_ABRE.test(f.type + ' ' + f.name)){ naoAbre++; return; }
     const col = colecaoDoCaminho(it.rel);
     // Soltar a mesma pasta duas vezes não pode duplicar a fila.
     const jaTem = FILA.some(function(x){
       return x.file.name===f.name && x.file.size===f.size && x.col===col;
     });
     if(jaTem){ repetidos++; return; }
-    FILA.push({file:f, nome:f.name.replace(/\.[^.]+$/,''), col:col, st:'fila', pct:0, det:''});
+    FILA.push({file:f, nome:f.name.replace(/\.[^.]+$/,''), col:col,
+               tipo: ehPdf ? 'pdf' : 'foto', st:'fila', pct:0, det:''});
   });
   if(naoAbre)        toast(naoAbre+' foto(s) em HEIC/TIFF. O navegador não abre esse formato — salve como JPG e mande de novo.', 'err');
-  else if(ignorados) toast(ignorados+' arquivo(s) do tipo errado foram ignorados.', 'err');
+  else if(ignorados) toast(ignorados+' arquivo(s) ignorados: só entram PDF e imagem.', 'err');
   else if(repetidos) toast(repetidos+' arquivo(s) já estavam na lista.', 'err');
   renderFila();
 }
@@ -904,7 +909,8 @@ function renderFila(){
       + '<span class="fi-st '+cls+'">'+esc(rot)+'</span>'
       + (f.st==='fila' ? '<button class="fi-rm" onclick="filaRm('+n+')" title="Tirar da lista">&times;</button>' : '')
       + '</div>'
-      + (f.col ? '<div class="fi-col">▤ '+esc(f.col)+'</div>' : '')
+      + '<div class="fi-col">'+(f.tipo==='pdf'?'PDF':'FOTO')
+        + (f.col ? ' · ▤ '+esc(f.col) : '')+'</div>'
       + (f.st==='enviando'||f.st==='comprimindo' ? '<div class="fi-bar"><i style="width:'+(f.st==='comprimindo'?35:f.pct)+'%"></i></div>' : '')
       + '</div>';
   }).join('');
@@ -925,7 +931,6 @@ function renderFila(){
 async function enviarFila(){
   if(!EDITOR) return;
   const colecaoCampo = (document.getElementById('up-col').value||'').trim();
-  const tipo    = TAB;
   const bt      = document.getElementById('bt-enviar');
   bt.disabled = true; bt.textContent = 'Enviando…';
 
@@ -935,6 +940,7 @@ async function enviarFila(){
     if(f.st !== 'fila') continue;
     try{
       f.st = 'comprimindo'; f.det = ''; renderFila();
+      const tipo = f.tipo;                     // cada arquivo sabe o que é
       const prep = tipo==='pdf'
         ? await prepararPDF(f.file, function(txt){ f.det = txt; renderFila(); })
         : await prepararFoto(f.file);
@@ -978,7 +984,13 @@ async function enviarFila(){
 
   bt.textContent = 'Enviar';
   renderFila();
-  if(ok)     toast(ok+' arquivo(s) no ar pra todo mundo.', 'ok');
+  // Como PDF e foto podem subir juntos, diz pra qual aba cada coisa foi —
+  // senão a pessoa manda 8 arquivos, vê 5 na tela e acha que sumiram 3.
+  const subiuPdf  = FILA.filter(f=>f.st==='ok' && f.tipo==='pdf').length;
+  const subiuFoto = FILA.filter(f=>f.st==='ok' && f.tipo==='foto').length;
+  if(subiuPdf && subiuFoto)
+    toast(subiuPdf+' em Catálogos e '+subiuFoto+' em Fotos das Coleções.', 'ok');
+  else if(ok) toast(ok+' arquivo(s) no ar pra todo mundo.', 'ok');
   if(falhou) toast(falhou+' arquivo(s) não subiram. Veja a lista.', 'err');
   if(ok && !falhou) setTimeout(()=>fecharModal('mov-up'), 900);
 }
