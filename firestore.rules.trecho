@@ -1,29 +1,51 @@
 // ══════════════════════════════════════════════════════════════
-//  Loretto Scarpa · Catálogos — trecho pro Firestore
+//  CATÁLOGOS · o que acrescentar nas regras do Firestore
 //
-//  ⚠️ ATENÇÃO: NÃO substitua o arquivo de regras inteiro!
-//  O projeto loretto-scarpa-l-icr já tem regras das outras
-//  coleções (ls_metas, ls_historico, ls_melhorias…). Se você
-//  colar por cima de tudo, os outros painéis param de funcionar.
+//  ⚠️ NÃO substitua o arquivo de regras inteiro. O projeto
+//  loretto-scarpa-l-icr já tem as regras das outras centrais
+//  (metas, RH, estoque, entregas, comunicados). Colar por cima
+//  de tudo derruba os outros painéis.
 //
-//  O que fazer: console.firebase.google.com → Firestore Database
-//  → aba Rules. Cole APENAS os blocos abaixo DENTRO do
-//  match /databases/{database}/documents { ... } que já existe,
-//  junto dos outros match. Depois clique em Publicar.
+//  Console → Firestore Database → aba Rules → acrescente os dois
+//  blocos abaixo → Publicar.
 // ══════════════════════════════════════════════════════════════
 
+
+// ── 1 ── junto dos outros helpers, lá no topo
+
     function editorCatalogo() {
-      return request.auth != null
-        && request.auth.token.email.lower() in [
-             'lorettoscarpa@gmail.com',
-             'lorraynelorettoscarpa@gmail.com'
-           ];
+      return logado() && request.auth.token.email.lower() in [
+        'lorettoscarpa@gmail.com',
+        'lorraynelorettoscarpa@gmail.com'
+      ];
     }
 
-    match /ls_catalogos/{item} {
-      // Toda vendedora logada na Central lê a lista.
-      allow read: if request.auth != null;
 
-      // Só a gestão e a Lorrayne criam, renomeiam e excluem.
+// ── 2 ── junto dos outros match
+
+    // Toda vendedora logada LÊ a lista (é o que faz a tela
+    // atualizar sozinha pra todo mundo). Criar, renomear e
+    // excluir: só os dois e-mails do editorCatalogo().
+    match /catalogos_arquivos/{item} {
+      allow read: if logado();
       allow create, update, delete: if editorCatalogo();
     }
+
+
+// ── 3 ── E O MAIS IMPORTANTE ──────────────────────────────────
+//  'catalogos_arquivos' PRECISA entrar na lista de exceções da
+//  regra coringa lá do final. Sem isso os blocos acima não valem
+//  nada: no Firestore as regras se SOMAM, basta UMA liberar pra
+//  liberar — e a coringa daria escrita a qualquer pessoa logada,
+//  então qualquer vendedora conseguiria apagar catálogo.
+//
+//  A linha fica assim (note também 'ls_escala', da escala da equipe):
+
+      allow read, write: if !(coll in ['hub_config','ls_acessos','lancamentos','bancoHoras','documentosRH','ls_comunicados','ls_tarefas','catalogos_arquivos','ls_escala'])
+        && request.auth != null
+        && request.auth.token.firebase.sign_in_provider != 'anonymous';
+
+
+//  Obs.: a coleção chama-se catalogos_arquivos, no plural com
+//  sufixo. NÃO confundir com ls_catalogo (singular), que já
+//  existia e é da Central de Etiquetas / Estoque.
